@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{de1a1abf-ad0c-4f57-bb29-417afdeb37fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="json\include">
+      <UniqueIdentifier>{24151ccb-1171-437c-aea7-1e3620372557}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32Project1.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RockText.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RockSocket.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\autolink.h">
+      <Filter>json\include</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\config.h">
+      <Filter>json\include</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\features.h">
+      <Filter>json\include</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\forwards.h">
+      <Filter>json\include</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\json.h">
+      <Filter>json\include</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\reader.h">
+      <Filter>json\include</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\value.h">
+      <Filter>json\include</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\writer.h">
+      <Filter>json\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32Project1.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RockText.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RockSocket.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_reader.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_value.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_writer.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Win32Project1.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="Win32Project1.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
