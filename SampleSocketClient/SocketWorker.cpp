@@ -131,7 +131,7 @@ public:
 	}
 
 
-	void creatSockets(int nCount)
+	void creatSockets(DWORD nCount)
 	{
 		SOCKET sTemp = INVALID_SOCKET;
 		for (; sClients.size() < nCount; )
