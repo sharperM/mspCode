@@ -2,6 +2,7 @@
 #include "SocketWorker.h"
 #include <winsock2.h>
 #include <string>
+#include <vector>
 #pragma comment (lib, "Ws2_32.lib")
 
 class SocketWorker::Impl{
@@ -11,6 +12,10 @@ public:
 	WSADATA				wsd;
 
 	SOCKET				sClient;
+
+	std::vector<SOCKET> sClients;
+
+	int					nCount;
 
 	struct sockaddr_in	server;
 
@@ -124,12 +129,44 @@ public:
 		HWND hStaticBox = ::GetDlgItem(AfxGetMainWnd()->m_hWnd, IDC_STATIC);
 		SetWindowTextA(hStaticBox, str);
 	}
+
+
+	void creatSockets(int nCount)
+	{
+		SOCKET sTemp = INVALID_SOCKET;
+		for (; sClients.size() < nCount; )
+		{
+			sTemp = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+			if (sTemp != INVALID_SOCKET)
+			{
+				sClients.push_back(sTemp);
+				sTemp = INVALID_SOCKET;
+			}
+		}
+	}
+
+	void connectServerEx()
+	{
+		for (int i = 0, c = sClients.size(); i < c; ++i)
+		{
+			connect(sClients[i], (struct sockaddr *)&server, sizeof(server));
+		}
+	}
+	
+	void closeSocketEX_()
+	{
+		for (int i = 0, c = sClients.size(); i < c; ++i)
+		{
+			closesocket(sClients[i]);
+		}
+		sClients.clear();
+	}
 };
 SocketWorker::SocketWorker()
 {
 	impl = new Impl(this);
 	impl->initSocketlib();
-	impl->makeSocketAddress(5150, "192.168.10.5"/*"localhost"*/);
+	impl->makeSocketAddress(5150, "localhost"/*"192.168.10.5"*/);
 }
 
 
@@ -164,4 +201,11 @@ void SocketWorker::sendMsg(const char *strMsg)
 void SocketWorker::closeSocket()
 {
 	impl->closeSocket_();
+}
+
+void SocketWorker::test(int nCount)
+{
+	impl->creatSockets(nCount);
+	impl->connectServerEx();
+	impl->closeSocketEX_();
 }

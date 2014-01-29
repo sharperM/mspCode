@@ -12,5 +12,7 @@ public:
 	void connectServer();
 	void sendMsg(const char *strMsg);
 	void closeSocket();
+
+	void test(int nCount);
 };
 
