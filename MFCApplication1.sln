@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MFCApplication1", "MFCApplication1\MFCApplication1.vcxproj", "{937623F3-73BB-47C0-ACDC-70656996C1EF}"
 EndProject
@@ -14,6 +14,18 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WSAAsyncSelect", "WSAAsyncSelect\WSAAsyncSelect.vcxproj", "{278D44FB-4A44-4CF7-86A8-98CBA7BB42A3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleSocketClient", "SampleSocketClient\SampleSocketClient.vcxproj", "{EFA558B1-0910-4F33-A05B-9B91D459719F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WSAEventSelect", "WSAEventSelect\WSAEventSelect.vcxproj", "{F42B470B-78FB-4135-9CB0-40AE1C49CCC2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OverlappedModel", "OverlappedModel\OverlappedModel.vcxproj", "{7EEFC829-965C-4198-95A6-4D7CEB8C204A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OverlappedModelAcceptEx", "OverlappedModelAcceptEx\OverlappedModelAcceptEx.vcxproj", "{283BF901-0E6A-42A4-890C-908366011157}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CallbackAccept", "CallbackAccept\CallbackAccept.vcxproj", "{716887A0-E962-4DEC-B160-864266777B41}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CallbackAcceptEx", "CallbackAcceptEx\CallbackAcceptEx.vcxproj", "{3981D095-9D43-4340-B211-6A42B57D99C6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IOComplete", "IOComplete\IOComplete.vcxproj", "{C5773202-E114-4550-B3C2-AC6FF091C722}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +57,30 @@ Global
 		{EFA558B1-0910-4F33-A05B-9B91D459719F}.Debug|Win32.Build.0 = Debug|Win32
 		{EFA558B1-0910-4F33-A05B-9B91D459719F}.Release|Win32.ActiveCfg = Release|Win32
 		{EFA558B1-0910-4F33-A05B-9B91D459719F}.Release|Win32.Build.0 = Release|Win32
+		{F42B470B-78FB-4135-9CB0-40AE1C49CCC2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F42B470B-78FB-4135-9CB0-40AE1C49CCC2}.Debug|Win32.Build.0 = Debug|Win32
+		{F42B470B-78FB-4135-9CB0-40AE1C49CCC2}.Release|Win32.ActiveCfg = Release|Win32
+		{F42B470B-78FB-4135-9CB0-40AE1C49CCC2}.Release|Win32.Build.0 = Release|Win32
+		{7EEFC829-965C-4198-95A6-4D7CEB8C204A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7EEFC829-965C-4198-95A6-4D7CEB8C204A}.Debug|Win32.Build.0 = Debug|Win32
+		{7EEFC829-965C-4198-95A6-4D7CEB8C204A}.Release|Win32.ActiveCfg = Release|Win32
+		{7EEFC829-965C-4198-95A6-4D7CEB8C204A}.Release|Win32.Build.0 = Release|Win32
+		{283BF901-0E6A-42A4-890C-908366011157}.Debug|Win32.ActiveCfg = Debug|Win32
+		{283BF901-0E6A-42A4-890C-908366011157}.Debug|Win32.Build.0 = Debug|Win32
+		{283BF901-0E6A-42A4-890C-908366011157}.Release|Win32.ActiveCfg = Release|Win32
+		{283BF901-0E6A-42A4-890C-908366011157}.Release|Win32.Build.0 = Release|Win32
+		{716887A0-E962-4DEC-B160-864266777B41}.Debug|Win32.ActiveCfg = Debug|Win32
+		{716887A0-E962-4DEC-B160-864266777B41}.Debug|Win32.Build.0 = Debug|Win32
+		{716887A0-E962-4DEC-B160-864266777B41}.Release|Win32.ActiveCfg = Release|Win32
+		{716887A0-E962-4DEC-B160-864266777B41}.Release|Win32.Build.0 = Release|Win32
+		{3981D095-9D43-4340-B211-6A42B57D99C6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3981D095-9D43-4340-B211-6A42B57D99C6}.Debug|Win32.Build.0 = Debug|Win32
+		{3981D095-9D43-4340-B211-6A42B57D99C6}.Release|Win32.ActiveCfg = Release|Win32
+		{3981D095-9D43-4340-B211-6A42B57D99C6}.Release|Win32.Build.0 = Release|Win32
+		{C5773202-E114-4550-B3C2-AC6FF091C722}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C5773202-E114-4550-B3C2-AC6FF091C722}.Debug|Win32.Build.0 = Debug|Win32
+		{C5773202-E114-4550-B3C2-AC6FF091C722}.Release|Win32.ActiveCfg = Release|Win32
+		{C5773202-E114-4550-B3C2-AC6FF091C722}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
