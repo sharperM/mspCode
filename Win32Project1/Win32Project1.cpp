@@ -166,7 +166,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case 1:
 			if (wmEvent == BN_CLICKED)
 			{
-				RockSocket::instance().createServer();
+				RockSocket::instance();
 			}
 
 			break;
