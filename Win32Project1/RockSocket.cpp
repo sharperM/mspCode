@@ -14,6 +14,7 @@ using namespace std;
 #define DEFAULT_PORT "27015"
 #define PORT 5150
 
+#define DEFAULT_BUFFER 2048
 #define DATA_BUFSIZE 8192
 
 
@@ -21,6 +22,9 @@ using namespace std;
 // typedef definition
 
 enum SocketStat{SSinvalid,SSinit,SSconnet,SSclose};
+
+enum enSocketStat{ SSNoConnect, SSConnecting, SSconneted,  };
+
 
 typedef struct _SOCKET_INFORMATION {
 
@@ -310,6 +314,11 @@ public:
 
 	}
 
+	void closeSocket(bool bNotify)
+	{
+
+	}
+
 	void onAccept(WPARAM wParam, LPARAM lParam)
 	{
 		SOCKET Accept = INVALID_SOCKET;
@@ -424,7 +433,6 @@ public:
 
 	}
 
-#define DEFAULT_BUFFER 2048
 
 	void connectSever(DWORD ipaddr, WORD port)
 	{
