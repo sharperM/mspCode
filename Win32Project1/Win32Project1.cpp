@@ -117,7 +117,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
       return FALSE;
    }
-   HWND hotkeyControl = ::CreateWindow(HOTKEY_CLASSW, _T("test"), WS_VISIBLE|WS_CHILD|WS_BORDER, 0, 0, 590, 230, hWnd, NULL, hInstance, NULL);
+   HWND hotkeyControl = ::CreateWindow(HOTKEY_CLASS, TEXT("test"), WS_VISIBLE|WS_CHILD|WS_BORDER, 0, 0, 590, 230, hWnd, NULL, hInstance, NULL);
    HFONT font = CreateFont(19, 12, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
 	   CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("ËÎÌו"));
  //  (_In_ int cHeight, _In_ int cWidth, _In_ int cEscapement, _In_ int cOrientation, _In_ int cWeight, _In_ DWORD bItalic,

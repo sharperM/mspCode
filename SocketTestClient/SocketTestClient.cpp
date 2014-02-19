@@ -260,7 +260,6 @@ int main(int argc, char **argv)
 		host = gethostbyname(szServer);
 
 		if (host == NULL)
-
 		{
 
 			printf("Unable to resolve server %s\n", szServer);

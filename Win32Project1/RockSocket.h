@@ -8,6 +8,7 @@ public:
 	~RockSocket();
 	static RockSocket& instance();
 
+	//创建服务器
 	void createServer();
 
 	void onAccept(WPARAM wParam, LPARAM lParam);
@@ -18,6 +19,8 @@ public:
 
 	void onClose(WPARAM wParam, LPARAM lParam);
 
+	//链接服务器
+	void connectSever(DWORD ipaddr, WORD port);
 private:
 	Impl *impl;
 };

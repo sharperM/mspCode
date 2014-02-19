@@ -16,6 +16,7 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
-#define WM_SOCKET (WM_USER + 1)
+#define WM_GETIPMSG (WM_USER + 1)
+#define WM_SOCKET_NOTIFY (WM_USER + 2)
 
 // TODO:  在此处引用程序需要的其他头文件

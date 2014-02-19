@@ -44,8 +44,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 class RockSocketException
 {
 public:
+	string msg;
 	RockSocketException();
 	~RockSocketException();
+	RockSocketException(const string& msg);
 
 private:
 
@@ -53,6 +55,11 @@ private:
 
 RockSocketException::RockSocketException()
 {
+}
+
+RockSocketException::RockSocketException(const string& msg)
+{
+	this->msg = msg;
 }
 
 RockSocketException::~RockSocketException()
@@ -66,6 +73,9 @@ private:
 	static LPSOCKET_INFORMATION SocketInfoList;
 	SocketStat					m_stat;
 	HWND						workWnd;
+	char						serverAddr[256];
+	HOSTENT						serverhost;
+	vector<char>				vecSendbuf;
 public:
 	Impl(RockSocket *_this)
 	{
@@ -73,7 +83,7 @@ public:
 		m_stat = SSinvalid;
 	}
 
-	void loadconfig(string & strPath)
+	void loadConfig(string & strPath)
 	{
 		std::ifstream  f(strPath.c_str(), ios::binary | ios::in);
 		Json::Value v;
@@ -137,14 +147,10 @@ public:
 	{
 		if (m_stat == SSinvalid)
 		{		
-			int iSendResult;
 			SOCKADDR_IN InternetAddr;
 			struct addrinfo *result = NULL;
 			int iResult;
-			char recvbuf[DEFAULT_BUFLEN];
-			int recvbuflen = DEFAULT_BUFLEN;
 			SOCKET ListenSocket = INVALID_SOCKET;
-			SOCKET ClientSocket = INVALID_SOCKET;
 
 			try
 			{
@@ -160,7 +166,7 @@ public:
 				}
 				workWnd = MakeWorkerWindow();
 
-				WSAAsyncSelect(ListenSocket, workWnd, WM_SOCKET, FD_ACCEPT | FD_CLOSE);
+				WSAAsyncSelect(ListenSocket, workWnd, WM_SOCKET_NOTIFY, FD_ACCEPT | FD_CLOSE);
 
 				InternetAddr.sin_family = AF_INET;
 				InternetAddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -178,7 +184,7 @@ public:
 				}
 				m_stat = SSinit;
 			}
-			catch (RockSocketException &e)
+			catch (RockSocketException )
 			{
 				WSACleanup();
 				m_stat = SSinvalid;
@@ -192,7 +198,7 @@ public:
 	HWND MakeWorkerWindow(void)
 	{
 		WNDCLASS wndclass;
-		CHAR *ProviderClass = "AsyncSelect";
+		TCHAR *ProviderClass = _T("AsyncSelect");
 		HWND Window;
 
 		wndclass.style = CS_HREDRAW | CS_VREDRAW |WS_VISIBLE;
@@ -204,7 +210,7 @@ public:
 		wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 		wndclass.lpszMenuName = NULL;
-		wndclass.lpszClassName = (LPCWSTR)ProviderClass;
+		wndclass.lpszClassName = (LPCSTR)ProviderClass;
 
 		if (RegisterClass(&wndclass) == 0)
 		{
@@ -217,8 +223,8 @@ public:
 		// Create a window
 
 		if ((Window = CreateWindow(
-			(LPCWSTR)ProviderClass,
-			L"",
+			(LPCSTR)ProviderClass,
+			TEXT(""),
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
@@ -299,6 +305,11 @@ public:
 		}
 	}
 
+	void senddata(const char * data, unsigned long len)
+	{
+
+	}
+
 	void onAccept(WPARAM wParam, LPARAM lParam)
 	{
 		SOCKET Accept = INVALID_SOCKET;
@@ -315,13 +326,12 @@ public:
 
 		printf("Socket number %d connected\n", Accept);
 
-		WSAAsyncSelect(Accept, workWnd, WM_SOCKET, FD_READ | FD_WRITE | FD_CLOSE);
+		WSAAsyncSelect(Accept, workWnd, WM_SOCKET_NOTIFY, FD_READ | FD_WRITE | FD_CLOSE);
 	}
 
 	int onRead(WPARAM wParam, LPARAM lParam)
 	{
 		DWORD RecvBytes;
-		DWORD SendBytes;
 		LPSOCKET_INFORMATION SocketInfo;
 		DWORD Flags;
 
@@ -363,9 +373,7 @@ public:
 	int onWrite(WPARAM wParam, LPARAM lParam)
 	{
 		LPSOCKET_INFORMATION SocketInfo;
-		DWORD RecvBytes;
 		DWORD SendBytes;
-		DWORD Flags;
 
 		SocketInfo = RockSocket::Impl::GetSocketInformation(wParam);
 
@@ -389,6 +397,7 @@ public:
 				printf("WSASend() is OK!\n");
 				SocketInfo->BytesSEND += SendBytes;
 			}
+			return 1;
 		}
 
 		if (SocketInfo->BytesSEND == SocketInfo->BytesRECV)
@@ -400,7 +409,7 @@ public:
 			if (SocketInfo->RecvPosted == TRUE)
 			{
 				SocketInfo->RecvPosted = FALSE;
-				PostMessage(workWnd, WM_SOCKET, wParam, FD_READ);
+				PostMessage(workWnd, WM_SOCKET_NOTIFY, wParam, FD_READ);
 			}
 		}
 	}
@@ -409,16 +418,91 @@ public:
 	{
 
 	}	
+
+	void onConnect(WPARAM wParam, LPARAM lParam)
+	{
+
+	}
+
+#define DEFAULT_BUFFER 2048
+
+	void connectSever(DWORD ipaddr, WORD port)
+	{
+		struct sockaddr_in	server;
+		struct hostent		*host = NULL;
+		int					ret;
+
+		try
+		{
+			InitSocket();
+			if (ipaddr == 0)
+			{
+				if (WSAAsyncGetHostByName(workWnd, 
+					WM_GETIPMSG, serverAddr,(char*)&serverhost,sizeof(serverhost)) == 0)
+				{
+					throw RockSocketException(string("½âÎöÓòÃû³ö´í"));
+				}
+			}
+			SOCKET sClient = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+			if (sClient == INVALID_SOCKET)
+			{
+				throw RockSocketException();
+			}
+
+			server.sin_family = AF_INET;
+			server.sin_port = htons(port);
+			server.sin_addr.S_un.S_addr = ipaddr;
+
+			ret = WSAAsyncSelect(sClient, workWnd, WM_SOCKET_NOTIFY, FD_READ | FD_CONNECT | FD_CLOSE | FD_WRITE);
+
+			if (ret == SOCKET_ERROR)
+			{
+				throw RockSocketException(string("°ó¶¨´°¿Ú´íÎó"));
+			}
+			ret = connect(sClient,(struct sockaddr*)&server, sizeof(server));
+			
+			if (ret == SOCKET_ERROR)
+			{
+				ret = WSAGetLastError();
+				if (ret != WSAEWOULDBLOCK)
+				{
+					throw RockSocketException(string(""));
+				}
+			}
+			m_stat = SSconnet;
+		}
+		catch (RockSocketException e)
+		{
+			return;
+		}
+
+	}
+
+	void connectSever(LPCTSTR pszServerAddr, WORD port)
+	{
+		struct hostent		*host = NULL;
+
+		DWORD dwServerIP = inet_addr(pszServerAddr);
+ 		if (dwServerIP == INADDR_NONE)
+ 		{
+
+//  		host = gethostbyname(pszServerAddr);
+//  		if (host == NULL)
+//  		{
+//  			throw RockSocketException(string("½âÎöÓòÃûÊ§°Ü"));
+//  		}
+//  		else
+//  		{
+//  			dwServerIP = ((LPIN_ADDR)host->h_addr_list[0])->s_addr;
+//  		}
+			dwServerIP = 0;
+ 		}
+		connectSever(dwServerIP, port);
+	}
 };
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	SOCKET Accept;
-	LPSOCKET_INFORMATION SocketInfo;
-	DWORD RecvBytes;
-	DWORD SendBytes;
-	DWORD Flags;
-
-	if (uMsg == WM_SOCKET)
+	if (uMsg == WM_SOCKET_NOTIFY)
 	{
 		if (WSAGETSELECTERROR(lParam))
 		{
@@ -463,7 +547,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 RockSocket::RockSocket()
 {
 	impl = new Impl(this);
-	impl->loadconfig(string("C:/Users/stephen/Desktop/1.json"));
+	impl->loadConfig(string("C:/Users/stephen/Desktop/1.json"));
 	createServer();
 }
 
@@ -481,6 +565,7 @@ RockSocket& RockSocket::instance()
 	static RockSocket singleton;
 	return singleton;
 }
+
 void RockSocket::createServer()
 {
 	impl->createServer();
@@ -504,6 +589,11 @@ void RockSocket::onWrite(WPARAM wParam, LPARAM lParam)
 void RockSocket::onClose(WPARAM wParam, LPARAM lParam)
 {
 	impl->onClose(wParam, lParam);
+}
+
+void RockSocket::connectSever(DWORD ipaddr, WORD port)
+{
+	impl->connectSever(ipaddr, port);
 }
 
 
