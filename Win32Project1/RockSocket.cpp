@@ -24,7 +24,7 @@ using namespace std;
 enum SocketStat{SSinvalid,SSinit,SSconnet,SSclose};
 
 enum enSocketStat{ SSNoConnect, SSConnecting, SSconneted,  };
-
+---
 
 typedef struct _SOCKET_INFORMATION {
 
