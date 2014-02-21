@@ -129,7 +129,7 @@ SocketWorker::SocketWorker()
 {
 	impl = new Impl(this);
 	impl->initSocketlib();
-	impl->makeSocketAddress(5150, "192.168.10.5"/*"localhost"*/);
+	impl->makeSocketAddress(5150, /*"192.168.10.5"*/"localhost");
 }
 
 
