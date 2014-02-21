@@ -204,7 +204,7 @@ public:
 		TCHAR *ProviderClass = _T("AsyncSelect");
 		HWND Window;
 
-		wndclass.style = CS_HREDRAW | CS_VREDRAW |WS_VISIBLE;
+		wndclass.style = CS_HREDRAW | CS_VREDRAW ;
 		wndclass.lpfnWndProc = (WNDPROC)WindowProc;
 		wndclass.cbClsExtra = 0;
 		wndclass.cbWndExtra = 0;
