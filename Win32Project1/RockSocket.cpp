@@ -7,6 +7,7 @@
 #include "json\json.h"
 #include <ios>
 #include <fstream>
+#include <sstream>
 #include <string>
 using namespace std;
 #pragma comment (lib, "Ws2_32.lib")
@@ -17,7 +18,7 @@ using namespace std;
 #define DEFAULT_BUFFER 2048
 #define DATA_BUFSIZE 8192
 
-
+#define  MAKESTR(s) (((std::ostringstream&)(std::ostringstream()<<std::string() << s)).str().c_str())
 
 // typedef definition
 
@@ -79,13 +80,27 @@ private:
 	char						serverAddr[256];
 	HOSTENT						serverhost;
 	vector<char>				vecSendbuf;
+	SOCKET						sClient;
+	SOCKET						ListenSocket;
 public:
 	Impl(RockSocket *_this)
 	{
-		this->_this = _this;
-		m_stat = SSinvalid;
+		this->_this		= _this;
+		m_stat			= SSinvalid;
+		ListenSocket	= INVALID_SOCKET;
 	}
 
+	~Impl()
+	{
+		if (m_stat != SSinvalid)
+		{
+			if (m_stat != SSclose)
+			{
+				closesocket(ListenSocket);
+			}
+			WSACleanup();
+		}
+	}
 	void loadConfig(string & strPath)
 	{
 		std::ifstream  f(strPath.c_str(), ios::binary | ios::in);
@@ -117,7 +132,7 @@ public:
 		iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 		if (iResult != 0) {
 			throw RockSocketException();
-			//printf("WSAStartup failed with error: %d\n", iResult);
+			//OutputDebugStringA("WSAStartup failed with error: %d\n", iResult);
 			return 1;
 		}
 		return 0;
@@ -137,7 +152,7 @@ public:
 		// Resolve the server address and port
 		iResult = getaddrinfo(NULL, strPort.c_str()/*DEFAULT_PORT*/, &hints, ppresult);
 		if (iResult != 0) {
-			printf("getaddrinfo failed with error: %d\n", iResult);
+			OutputDebugStringA(MAKESTR("getaddrinfo failed with error: "<<iResult<<"\n"));
 			throw RockSocketException();
 
 // 			WSACleanup();
@@ -153,7 +168,6 @@ public:
 			SOCKADDR_IN InternetAddr;
 			struct addrinfo *result = NULL;
 			int iResult;
-			SOCKET ListenSocket = INVALID_SOCKET;
 
 			try
 			{
@@ -163,7 +177,7 @@ public:
 				// Create a SOCKET for connecting to server
 				ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 				if (ListenSocket == INVALID_SOCKET) {
-	// 				printf("socket failed with error: %ld\n", WSAGetLastError());
+	// 				OutputDebugStringA("socket failed with error: %ld\n", WSAGetLastError());
 					freeaddrinfo(result);
 					throw RockSocketException();
 				}
@@ -181,7 +195,7 @@ public:
 
 				iResult = listen(ListenSocket, SOMAXCONN);
 				if (iResult == SOCKET_ERROR) {
-					//printf("listen failed with error: %d\n", WSAGetLastError());
+					OutputDebugStringA(MAKESTR("listen failed with error: "<< WSAGetLastError()<<"\n"));
 					closesocket(ListenSocket);
 					throw RockSocketException();
 				}
@@ -201,7 +215,7 @@ public:
 	HWND MakeWorkerWindow(void)
 	{
 		WNDCLASS wndclass;
-		TCHAR *ProviderClass = _T("AsyncSelect");
+		CHAR *ProviderClass = TEXT("AsyncSelect");
 		HWND Window;
 
 		wndclass.style = CS_HREDRAW | CS_VREDRAW ;
@@ -217,11 +231,11 @@ public:
 
 		if (RegisterClass(&wndclass) == 0)
 		{
-			printf("RegisterClass() failed with error %d\n", GetLastError());
+			OutputDebugStringA(MAKESTR("RegisterClass() failed with error " << GetLastError()<<"\n"));
 			return NULL;
 		}
 		else
-			printf("RegisterClass() is OK!\n");
+			OutputDebugStringA("RegisterClass() is OK!\n");
 
 		// Create a window
 
@@ -238,11 +252,11 @@ public:
 			NULL,
 			NULL)) == NULL)
 		{
-			printf("CreateWindow() failed with error %d\n", GetLastError());
+			OutputDebugStringA(MAKESTR("CreateWindow() failed with error " << GetLastError() << "\n"));
 			return NULL;
 		}
 		else
-			printf("CreateWindow() is OK!\n");
+			OutputDebugStringA("CreateWindow() is OK!\n");
 
 		return Window;
 	}
@@ -253,11 +267,11 @@ public:
 
 		if ((SI = (LPSOCKET_INFORMATION)GlobalAlloc(GPTR, sizeof(SOCKET_INFORMATION))) == NULL)
 		{
-			printf("GlobalAlloc() failed with error %d\n", GetLastError());
+			OutputDebugStringA(MAKESTR("GlobalAlloc() failed with error " << GetLastError() << "\n"));
 			return;
 		}
 		else
-			printf("GlobalAlloc() for SOCKET_INFORMATION is OK!\n");
+			OutputDebugStringA("GlobalAlloc() for SOCKET_INFORMATION is OK!\n");
 
 		// Prepare SocketInfo structure for use
 
@@ -310,12 +324,15 @@ public:
 
 	void senddata(const char * data, unsigned long len)
 	{
-
+		if (data!=NULL&&len>0)
+		{
+			vecSendbuf.insert(vecSendbuf.end(), data, data + len);
+		}
 	}
 
 	void closeSocket(bool bNotify)
 	{
-
+		closesocket(sClient);
 	}
 
 	void onAccept(WPARAM wParam, LPARAM lParam)
@@ -324,15 +341,15 @@ public:
 
 		if ((Accept = accept(wParam, NULL, NULL)) == INVALID_SOCKET)
 		{
-			printf("accept() failed with error %d\n", WSAGetLastError());
+			OutputDebugStringA(MAKESTR("accept() failed with error " << WSAGetLastError() << "\n"));
 		}
 		else
-			printf("accept() is OK!\n");
+			OutputDebugStringA("accept() is OK!\n");
 		// Create a socket information structure to associate with the socket for processing I/O
 
 		RockSocket::Impl::CreateSocketInformation(Accept);
 
-		printf("Socket number %d connected\n", Accept);
+		OutputDebugStringA(MAKESTR("Socket number "<< Accept<<" connected\n"));
 
 		WSAAsyncSelect(Accept, workWnd, WM_SOCKET_NOTIFY, FD_READ | FD_WRITE | FD_CLOSE);
 	}
@@ -364,14 +381,14 @@ public:
 			{
 				if (WSAGetLastError() != WSAEWOULDBLOCK)
 				{
-					printf("WSARecv() failed with error %d\n", WSAGetLastError());
+					OutputDebugStringA(MAKESTR("WSARecv() failed with error "<< WSAGetLastError()<<"\n"));
 					RockSocket::Impl::FreeSocketInformation(wParam);
 					return 0;
 				}
 			}
 			else // No error so update the byte count
 			{
-				printf("WSARecv() is OK!\n");
+				OutputDebugStringA("WSARecv() is OK!\n");
 				SocketInfo->BytesRECV = RecvBytes;
 			}
 		}
@@ -395,14 +412,15 @@ public:
 			{
 				if (WSAGetLastError() != WSAEWOULDBLOCK)
 				{
-					printf("WSASend() failed with error %d\n", WSAGetLastError());
+
+					OutputDebugStringA(MAKESTR("WSASend() failed with error "<<WSAGetLastError()<<"\n"));
 					RockSocket::Impl::FreeSocketInformation(wParam);
 					return 0;
 				}
 			}
 			else // No error so update the byte count
 			{
-				printf("WSASend() is OK!\n");
+				OutputDebugStringA("WSASend() is OK!\n");
 				SocketInfo->BytesSEND += SendBytes;
 			}
 			return 1;
@@ -432,7 +450,6 @@ public:
 
 	}
 
-
 	void connectSever(DWORD ipaddr, WORD port)
 	{
 		struct sockaddr_in	server;
@@ -450,7 +467,7 @@ public:
 					throw RockSocketException(string("½âÎöÓòÃû³ö´í"));
 				}
 			}
-			SOCKET sClient = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+			sClient = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 			if (sClient == INVALID_SOCKET)
 			{
 				throw RockSocketException();
@@ -513,12 +530,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (WSAGETSELECTERROR(lParam))
 		{
-			printf("Socket failed with error %d\n", WSAGETSELECTERROR(lParam));
+			OutputDebugStringA(MAKESTR("Socket failed with error "<< WSAGETSELECTERROR(lParam)<<"\n"));
 			RockSocket::Impl::FreeSocketInformation(wParam);
 		}
 		else
 		{
-			printf("Socket looks fine!\n");
+			OutputDebugStringA("Socket looks fine!\n");
 
 			switch (WSAGETSELECTEVENT(lParam))
 			{
@@ -539,7 +556,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			case FD_CLOSE:
 				RockSocket::instance().onClose(wParam, lParam);
-				printf("Closing socket %d\n", wParam);
+				OutputDebugStringA(MAKESTR("Closing socket "<< wParam<<"\n"));
 				RockSocket::Impl::FreeSocketInformation(wParam);
 				break;
 			}
