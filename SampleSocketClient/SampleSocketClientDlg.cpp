@@ -103,7 +103,7 @@ void CSampleSocketClientDlg::OnBnClickedSendMsg()
 	{
 		USES_CONVERSION;
 		CHAR* pAnsiString = W2A(m_value.GetString());
-		SocketWorker::instance().sendMsg(pAnsiString/*"hello socket"*/);
+		SocketWorker::instance().sendMsg(pAnsiString/*"hello socket"*/,strlen(pAnsiString)+1);
 	}
 }
 

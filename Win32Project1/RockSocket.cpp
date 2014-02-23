@@ -9,23 +9,19 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+
 using namespace std;
 #pragma comment (lib, "Ws2_32.lib")
-#define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "27015"
-#define PORT 5150
-
+#define DEFAULT_PORT "5150"
 #define DEFAULT_BUFFER 2048
 #define DATA_BUFSIZE 8192
-
 #define  MAKESTR(s) (((std::ostringstream&)(std::ostringstream()<<std::string() << s)).str().c_str())
 
 // typedef definition
 
 enum SocketStat{SSinvalid,SSinit,SSconnet,SSclose};
-
-enum enSocketStat{ SSNoConnect, SSConnecting, SSconneted,  };
-
+enum enClientSocketStat{ SSNoConnect, SSConnecting, SSconneted,  };
+enum enServerSocketStat{ SSNobind, SSBinded};
 typedef struct _SOCKET_INFORMATION {
 
 	BOOL RecvPosted;
@@ -52,7 +48,6 @@ public:
 	RockSocketException();
 	~RockSocketException();
 	RockSocketException(const string& msg);
-
 private:
 
 };
@@ -75,7 +70,10 @@ class RockSocket::Impl
 private:
 	RockSocket					* _this;
 	static LPSOCKET_INFORMATION SocketInfoList;
+	bool						bLibInit;
 	SocketStat					m_stat;
+	enClientSocketStat			enClientStat;
+	enServerSocketStat			enServerStat;
 	HWND						workWnd;
 	char						serverAddr[256];
 	HOSTENT						serverhost;
@@ -87,18 +85,34 @@ public:
 	{
 		this->_this		= _this;
 		m_stat			= SSinvalid;
+		bLibInit = false;
 		ListenSocket	= INVALID_SOCKET;
+		sClient = INVALID_SOCKET;
+		enClientStat = SSNoConnect;
+		enServerStat = SSNobind;
+		workWnd = NULL;
 	}
 
 	~Impl()
 	{
 		if (m_stat != SSinvalid)
 		{
-			if (m_stat != SSclose)
-			{
+			if (ListenSocket != INVALID_SOCKET)
+			{	
 				closesocket(ListenSocket);
 			}
-			WSACleanup();
+			if (enClientStat != SSNoConnect)
+			{
+				closesocket(sClient);
+			}
+			if (bLibInit)
+			{
+				WSACleanup();
+			}
+			if (workWnd)
+			{
+				SendMessage(workWnd, WM_CLOSE,NULL,NULL);
+			}
 		}
 	}
 	void loadConfig(string & strPath)
@@ -123,22 +137,23 @@ public:
 		}
 	}
 
-	int InitSocket()throw (RockSocketException)
+	bool InitSocketLib()throw(RockSocketException)
 	{
-		if (m_stat != SSinvalid) return 0;
+		if (bLibInit) return true;
 		WSADATA wsaData;
 		int iResult;
 		// Initialize Winsock
 		iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 		if (iResult != 0) {
+			OutputDebugStringA(MAKESTR("WSAStartup failed with error: " << iResult << "\n"));
 			throw RockSocketException();
-			//OutputDebugStringA("WSAStartup failed with error: %d\n", iResult);
-			return 1;
+			return false;
 		}
-		return 0;
+		bLibInit = true;
+		return true;
 	}
 
-	int setListenAddr(string& strPort, struct addrinfo **ppresult) throw(RockSocketException)
+	bool setListenAddr(string& strPort, struct addrinfo **ppresult) throw(RockSocketException)
 	{
 		int iResult;
 		struct addrinfo hints;
@@ -154,16 +169,14 @@ public:
 		if (iResult != 0) {
 			OutputDebugStringA(MAKESTR("getaddrinfo failed with error: "<<iResult<<"\n"));
 			throw RockSocketException();
-
-// 			WSACleanup();
-			return 1;
+			return false;
 		}
-		return 0;
+		return true;
 	}
 
-	int createServer()
+	bool createServer()
 	{
-		if (m_stat == SSinvalid)
+		if (enServerStat == SSNobind)
 		{		
 			SOCKADDR_IN InternetAddr;
 			struct addrinfo *result = NULL;
@@ -171,25 +184,37 @@ public:
 
 			try
 			{
-				InitSocket();
+				InitSocketLib();
+						
 				setListenAddr(string(DEFAULT_PORT), &result);
 
 				// Create a SOCKET for connecting to server
 				ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 				if (ListenSocket == INVALID_SOCKET) {
-	// 				OutputDebugStringA("socket failed with error: %ld\n", WSAGetLastError());
+					OutputDebugStringA(MAKESTR("socket failed with error: " << WSAGetLastError() << "\n"));
 					freeaddrinfo(result);
 					throw RockSocketException();
 				}
+				OutputDebugStringA("socket() is pretty fine!\n");
+
 				workWnd = MakeWorkerWindow();
 
-				WSAAsyncSelect(ListenSocket, workWnd, WM_SOCKET_NOTIFY, FD_ACCEPT | FD_CLOSE);
+				if (WSAAsyncSelect(ListenSocket, workWnd, WM_SOCKET_NOTIFY, FD_ACCEPT | FD_CLOSE))
+				{
+					OutputDebugStringA(MAKESTR("WSAAsyncSelect() failed with error code "<< WSAGetLastError()<<"\n"));
+					throw RockSocketException(string("°ó¶¨´°¿Ú´íÎó"));
+				}
+				OutputDebugStringA("WSAAsyncSelect() is OK lol!\n");
 
 				InternetAddr.sin_family = AF_INET;
 				InternetAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 				InternetAddr.sin_port = htons(atoi(DEFAULT_PORT));
 
-				bind(ListenSocket, (PSOCKADDR)&InternetAddr, sizeof(InternetAddr));
+				if (bind(ListenSocket, (PSOCKADDR)&InternetAddr, sizeof(InternetAddr)) == SOCKET_ERROR)
+				{
+					OutputDebugStringA(MAKESTR("bind() failed with error "<<WSAGetLastError()<<"\n"));
+					throw RockSocketException(string("bind() err"));
+				}
 
 				freeaddrinfo(result);
 
@@ -199,17 +224,16 @@ public:
 					closesocket(ListenSocket);
 					throw RockSocketException();
 				}
-				m_stat = SSinit;
+				OutputDebugStringA("Server Start successful");
+				enServerStat = SSBinded;
 			}
 			catch (RockSocketException )
 			{
-				WSACleanup();
-				m_stat = SSinvalid;
-				return 1;
+				return false;
 			}
 			
 		}
-		return 0;
+		return true;
 	}
 
 	HWND MakeWorkerWindow(void)
@@ -458,9 +482,11 @@ public:
 
 		try
 		{
-			InitSocket();
+			InitSocketLib();
+			workWnd = MakeWorkerWindow();
 			if (ipaddr == 0)
 			{
+				
 				if (WSAAsyncGetHostByName(workWnd, 
 					WM_GETIPMSG, serverAddr,(char*)&serverhost,sizeof(serverhost)) == 0)
 				{
@@ -501,7 +527,7 @@ public:
 		}
 
 	}
-
+	
 	void connectSever(LPCTSTR pszServerAddr, WORD port)
 	{
 		struct hostent		*host = NULL;
@@ -618,6 +644,11 @@ void RockSocket::onClose(WPARAM wParam, LPARAM lParam)
 void RockSocket::connectSever(DWORD ipaddr, WORD port)
 {
 	impl->connectSever(ipaddr, port);
+}
+
+void RockSocket::sendData(const char* data, unsigned long len)
+{
+
 }
 
 
