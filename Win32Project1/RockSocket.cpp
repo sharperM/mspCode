@@ -12,7 +12,7 @@
 using namespace std;
 #pragma comment (lib, "Ws2_32.lib")
 #define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "27015"
+#define DEFAULT_PORT "5150"
 #define PORT 5150
 
 #define DEFAULT_BUFFER 2048
