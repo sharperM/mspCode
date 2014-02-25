@@ -5,8 +5,9 @@ private:
 	friend class Impl;
 	class Impl;
 	Impl *impl;
-	SocketWorker();
+	
 public:
+	SocketWorker();
 	static SocketWorker& instance();
 	~SocketWorker();
 	void connectServer();
@@ -20,5 +21,7 @@ public:
 	void onWrite(WPARAM wParam, LPARAM lParam);
 
 	void onClose(WPARAM wParam, LPARAM lParam);
+
+	LRESULT wmProc(UINT uMsg, LPARAM lParam, WPARAM wParam);
 };
 

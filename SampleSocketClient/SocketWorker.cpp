@@ -40,7 +40,7 @@ public:
 
 	vector<char>				vecSendbuf;
 
-	enClientSocketStat			enClientStat;
+	volatile enClientSocketStat			enClientStat;
 
 	bool bSendReady;
 
@@ -110,7 +110,7 @@ public:
 			{
 				throw "socket() ERROR";
 			}
-			if (WSAAsyncSelect(sClient, hWorkWnd, WM_SOCKET_NOTIFY,
+			if (WSAAsyncSelect(sClient, hWorkWnd, WM_SOCKET_NOTIFY_,
 				FD_READ | FD_CONNECT | FD_CLOSE | FD_WRITE) == SOCKET_ERROR)
 			{
 				throw "°ó¶¨´°¿Ú´íÎó";
@@ -138,7 +138,7 @@ public:
 	{
 		struct sockaddr_in	server;
 		struct hostent		*host = NULL;
-		hWorkWnd = MakeWorkerWindow();
+		//hWorkWnd = MakeWorkerWindow(_this);
 		try
 		{
 			initSocketlib();
@@ -163,7 +163,7 @@ public:
 
 			
 
-			if (WSAAsyncSelect(sClient, hWorkWnd, WM_SOCKET_NOTIFY, 
+			if (WSAAsyncSelect(sClient, hWorkWnd, WM_SOCKET_NOTIFY_, 
 					FD_READ | FD_CONNECT | FD_CLOSE | FD_WRITE) == SOCKET_ERROR)
 			{
 				throw "°ó¶¨´°¿Ú´íÎó";
@@ -189,7 +189,7 @@ public:
 				}
 				enClientStat = SSConnecting;
 			}
-			enClientStat = SSconneted;
+			//enClientStat = SSconneted;
 		}
 		catch (const char * e)
 		{
@@ -255,12 +255,12 @@ public:
 	}
 
 
-	HWND MakeWorkerWindow(void)
+	HWND MakeWorkerWindow(SocketWorker * _this)
 	{
-		WNDCLASS wndclass;
+		WNDCLASSEX wndclass;
 		TCHAR *ProviderClass = TEXT("AsyncSelect");
 		HWND Window;
-
+		wndclass.cbSize = sizeof(wndclass);
 		wndclass.style = CS_HREDRAW | CS_VREDRAW;
 		wndclass.lpfnWndProc = (WNDPROC)WindowProc;
 		wndclass.cbClsExtra = 0;
@@ -271,8 +271,8 @@ public:
 		wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 		wndclass.lpszMenuName = NULL;
 		wndclass.lpszClassName = (PTCHAR)ProviderClass;
-
-		if (RegisterClass(&wndclass) == 0)
+		wndclass.hIconSm = NULL;
+		if (RegisterClassEx(&wndclass) == 0)
 		{
 			OutputDebugStringA(MAKESTR("RegisterClass() failed with error " << GetLastError() << "\n"));
 			return NULL;
@@ -300,7 +300,8 @@ public:
 		}
 		else
 			OutputDebugStringA("CreateWindow() is OK!\n");
-
+		SetWindowLong(Window, GWLP_USERDATA, (long)_this);
+		
 		return Window;
 	}
 
@@ -391,8 +392,7 @@ public:
 
 	void sendMsg(const char *strMsg, size_t len)
 	{
-		
-		if (enClientStat==SSconneted)
+		if (enClientStat == SSconneted)
 		{
 
 			//auto_ptr<char> p;
@@ -407,7 +407,7 @@ SocketWorker::SocketWorker()
 {
 	impl = new Impl(this);
 	impl->initSocketlib();
-	impl->hWorkWnd = impl->MakeWorkerWindow();
+	impl->hWorkWnd = impl->MakeWorkerWindow(this);
 }
 
 
@@ -469,13 +469,14 @@ void SocketWorker::onClose(WPARAM wParam, LPARAM lParam)
 	impl->onClose(wParam, lParam);
 }
 
-void wmProc(UINT uMsg, LPARAM lParam, WPARAM wParam)
+LRESULT SocketWorker::wmProc(UINT uMsg, LPARAM lParam, WPARAM wParam)
 {
-	if (uMsg == WM_SOCKET_NOTIFY)
+	if (uMsg == WM_SOCKET_NOTIFY_)
 	{
 		if (WSAGETSELECTERROR(lParam))
 		{
 			OutputDebugStringA(MAKESTR("Socket failed with error " << WSAGETSELECTERROR(lParam) << "\n"));
+			return 1;
 		}
 		else
 		{
@@ -484,22 +485,23 @@ void wmProc(UINT uMsg, LPARAM lParam, WPARAM wParam)
 			switch (WSAGETSELECTEVENT(lParam))
 			{
 			case FD_CONNECT:
-				SocketWorker::instance().onConnect(wParam, lParam);
+				
+				onConnect(wParam, lParam);
 				break;
 
 			case FD_READ:
-				SocketWorker::instance().onRead(wParam, lParam);
+				onRead(wParam, lParam);
 				break;
 				// DO NOT BREAK HERE SINCE WE GOT A SUCCESSFUL RECV. Go ahead
 
 				// and begin writing data to the client
 
 			case FD_WRITE:
-				SocketWorker::instance().onWrite(wParam, lParam);
+				onWrite(wParam, lParam);
 				break;
 
 			case FD_CLOSE:
-				SocketWorker::instance().onClose(wParam, lParam);
+				onClose(wParam, lParam);
 				OutputDebugStringA(MAKESTR("Closing socket " << wParam << "\n"));
 				break;
 			}
@@ -509,10 +511,15 @@ void wmProc(UINT uMsg, LPARAM lParam, WPARAM wParam)
 	{
 
 	}
+	return 0;
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	wmProc(uMsg, lParam, wParam);
+	if (uMsg == WM_SOCKET_NOTIFY_ || uMsg == WM_GETIPMSG)
+	{
+		SocketWorker * pWork = (SocketWorker *)GetWindowLong(hwnd, GWL_USERDATA);
+		pWork->wmProc(uMsg, lParam, wParam);
+	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

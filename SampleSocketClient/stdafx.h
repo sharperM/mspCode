@@ -37,7 +37,7 @@
 #include <afxsock.h>            // MFC Ì×½Ó×ÖÀ©Õ¹
 
 #define WM_GETIPMSG (WM_USER + 1)
-#define WM_SOCKET_NOTIFY (WM_USER + 2)
+#define WM_SOCKET_NOTIFY_ (WM_USER + 2)
 
 
 
