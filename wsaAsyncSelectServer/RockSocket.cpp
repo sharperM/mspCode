@@ -1,7 +1,8 @@
 #include "stdafx.h"
+// #include <windows.h>
+// #include <winsock2.h>
 #include "RockSocket.h"
-#include <winsock2.h>
-#include <ws2tcpip.h>
+// #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "json\json.h"
@@ -10,12 +11,15 @@
 #include <sstream>
 #include <string>
 
+
 using namespace std;
 #pragma comment (lib, "Ws2_32.lib")
 #define DEFAULT_PORT "5150"
 #define DEFAULT_BUFFER 2048
 #define DATA_BUFSIZE 8192
 #define  MAKESTR(s) (((std::ostringstream&)(std::ostringstream()<<std::string() << s)).str().c_str())
+#define  WM_SOCKET_NOTIFY (WM_USER+1)
+#define  WM_GETIPMSG (WM_USER+2)
 
 // typedef definition
 
@@ -242,7 +246,7 @@ public:
 	HWND MakeWorkerWindow(RockSocket* ptr)
 	{
 		WNDCLASS wndclass;
-		CHAR *ProviderClass = TEXT("AsyncSelect");
+		TCHAR *ProviderClass = TEXT("AsyncSelect");
 		HWND Window;
 
 		wndclass.style = CS_HREDRAW | CS_VREDRAW ;
@@ -254,7 +258,7 @@ public:
 		wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 		wndclass.lpszMenuName = NULL;
-		wndclass.lpszClassName = (LPCSTR)ProviderClass;
+		wndclass.lpszClassName = (LPCTSTR)ProviderClass;
 
 		if (RegisterClass(&wndclass) == 0)
 		{
@@ -267,7 +271,7 @@ public:
 		// Create a window
 
 		if ((Window = CreateWindow(
-			(LPCSTR)ProviderClass,
+			(LPCTSTR)ProviderClass,
 			TEXT(""),
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,
@@ -544,7 +548,7 @@ void RockSocket::sendData(const char* data, unsigned long len)
 
 }
 
-LRESULT RockSocket::wndProc(UINT uMsg, LPARAM lParam, WPARAM wParam)
+LRESULT RockSocket::wndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg == WM_SOCKET_NOTIFY)
 	{
@@ -589,6 +593,6 @@ LRESULT RockSocket::wndProc(UINT uMsg, LPARAM lParam, WPARAM wParam)
 
 void RockSocket::setSink(RockSocketSink* ptr)
 {
-	impl->setSink(RockSocketSink* ptr);
+	impl->setSink(ptr);
 }
 LPSOCKET_INFORMATION RockSocket::Impl::SocketInfoList = NULL;
