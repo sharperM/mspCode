@@ -8,6 +8,7 @@
 #include "afxdialogex.h"
 #include "SocketWorker.h"
 #include <string>
+#include <xmemory>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -16,12 +17,33 @@
 
 // CSampleSocketClientDlg 对话框
 
+class CSampleSocketClientDlg::Impl
+{
+public:
+	Impl(CSampleSocketClientDlg * _this);
+	~Impl();
+	CSampleSocketClientDlg * _this;
+	std::auto_ptr<SocketWorker> pSW;
+private:
 
+};
+
+CSampleSocketClientDlg::Impl::Impl(CSampleSocketClientDlg * _this)
+{
+	this->_this = _this;
+	pSW.reset(new SocketWorker);
+}
+
+CSampleSocketClientDlg::Impl::~Impl()
+{
+}
 
 CSampleSocketClientDlg::CSampleSocketClientDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CSampleSocketClientDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+	impl = new Impl(this);
+
 }
 
 void CSampleSocketClientDlg::DoDataExchange(CDataExchange* pDX)
@@ -103,7 +125,7 @@ void CSampleSocketClientDlg::OnBnClickedSendMsg()
 	{
 		USES_CONVERSION;
 		CHAR* pAnsiString = W2A(m_value.GetString());
-		SocketWorker::instance().sendMsg(pAnsiString/*"hello socket"*/,strlen(pAnsiString)+1);
+		impl->pSW->sendMsg(pAnsiString/*"hello socket"*/,strlen(pAnsiString)+1);
 	}
 }
 
@@ -111,17 +133,26 @@ void CSampleSocketClientDlg::OnBnClickedSendMsg()
 void CSampleSocketClientDlg::OnBnClickedConnect()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	SocketWorker::instance().connectServer();
+	impl->pSW->connectServer();
 }
 
 
 void CSampleSocketClientDlg::OnBnClickedCloseSocket()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	SocketWorker::instance().closeSocket();
+	impl->pSW->closeSocket();
 }
 
 void CSampleSocketClientDlg::OnBnClickedOk()
 {
 	OnBnClickedSendMsg();
+}
+
+CSampleSocketClientDlg::~CSampleSocketClientDlg()
+{
+	if (impl)
+	{
+		delete impl;
+	}
+	
 }

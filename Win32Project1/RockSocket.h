@@ -1,4 +1,14 @@
 #pragma once
+
+
+
+class RockSocketSink
+{
+public:
+	virtual void onAccept(){ ; }
+	virtual void onRead(){ ; }
+	virtual void onclose(){ ; }
+};
 class RockSocket
 {
 public:
@@ -11,12 +21,6 @@ public:
 
 	//创建服务器
 	void createServer();
-
-	//连接服务器
-	void connectSever(DWORD ipaddr, WORD port);
-
-	//
-	void connectSever(LPCSTR ipaddr, WORD port);
 
 	//发送消息
 	void sendData(const char* data, unsigned long len);
@@ -32,6 +36,9 @@ public:
 
 	void onClose(WPARAM wParam, LPARAM lParam);
 
+	LRESULT wndProc(UINT uMsg, LPARAM lParam, WPARAM wParam);
+
+	void setSink(RockSocketSink* ptr);
 private:
 	Impl *impl;
 };

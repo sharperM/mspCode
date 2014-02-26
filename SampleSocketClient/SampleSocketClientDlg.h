@@ -4,18 +4,21 @@
 
 #pragma once
 
-
 // CSampleSocketClientDlg 对话框
 class CSampleSocketClientDlg : public CDialogEx
 {
 // 构造
 public:
 	CSampleSocketClientDlg(CWnd* pParent = NULL);	// 标准构造函数
+	~CSampleSocketClientDlg();	
 
 // 对话框数据
 	enum { IDD = IDD_SAMPLESOCKETCLIENT_DIALOG };
 
 	protected:
+		class Impl;
+		friend class Impl;
+		Impl		*impl;
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
 
 
