@@ -18,7 +18,7 @@ public:
 	void onRead(WPARAM wParam, LPARAM lParam);
 
 	void onWrite(WPARAM wParam, LPARAM lParam);
-
+	
 	void onClose(WPARAM wParam, LPARAM lParam);
 };
 
