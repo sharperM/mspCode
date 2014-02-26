@@ -1,8 +1,6 @@
 #include "stdafx.h"
-// #include <windows.h>
-// #include <winsock2.h>
 #include "RockSocket.h"
-// #include <ws2tcpip.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "json\json.h"
@@ -489,7 +487,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg == WM_GETIPMSG||uMsg == WM_SOCKET_NOTIFY)
 	{
-		((RockSocket*)GetWindowLong(hwnd, GWLP_USERDATA))->wndProc(uMsg, lParam, wParam);
+		((RockSocket*)GetWindowLong(hwnd, GWLP_USERDATA))->wndProc(uMsg, wParam, lParam);
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
@@ -570,7 +568,7 @@ LRESULT RockSocket::wndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			case FD_READ:
 				onRead(wParam, lParam);
-				break;
+				/*break;*/
 
 			case FD_WRITE:
 				onWrite(wParam, lParam);
@@ -587,8 +585,9 @@ LRESULT RockSocket::wndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	if (uMsg == WM_GETIPMSG)
 	{
-
+		return 0;
 	}
+	return 0;
 }
 
 void RockSocket::setSink(RockSocketSink* ptr)
