@@ -383,13 +383,13 @@ public:
 			BytesSEND = 0;
 		}
 	}
-
+	
 	void onClose(WPARAM wParam, LPARAM lParam)
 	{
 		closesocket(wParam);
 		enClientStat = SSNoConnect;
 	}
-
+	
 	void sendMsg(const char *strMsg, size_t len)
 	{
 		if (enClientStat == SSconneted)

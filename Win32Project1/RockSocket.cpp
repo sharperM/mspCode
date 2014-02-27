@@ -589,6 +589,6 @@ LRESULT RockSocket::wndProc(UINT uMsg, LPARAM lParam, WPARAM wParam)
 
 void RockSocket::setSink(RockSocketSink* ptr)
 {
-	impl->setSink(RockSocketSink* ptr);
+	impl->setSink(ptr);
 }
 LPSOCKET_INFORMATION RockSocket::Impl::SocketInfoList = NULL;
