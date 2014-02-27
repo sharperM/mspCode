@@ -570,7 +570,7 @@ LRESULT RockSocket::wndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			case FD_READ:
 				onRead(wParam, lParam);
-				break;
+				//break;
 
 			case FD_WRITE:
 				onWrite(wParam, lParam);

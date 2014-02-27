@@ -16,6 +16,9 @@
     <Filter Include="socket">
       <UniqueIdentifier>{e683e311-4bf1-474d-b5aa-bb6e447110eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{0febbeb0-b87c-4ce0-98b0-f837191943cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -30,6 +33,33 @@
     <ClInclude Include="RockSocket.h">
       <Filter>socket</Filter>
     </ClInclude>
+    <ClInclude Include="json\json_batchallocator.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\autolink.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\config.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\features.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\forwards.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\json.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\reader.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\value.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json\writer.h">
+      <Filter>json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -41,5 +71,25 @@
     <ClCompile Include="RockSocket.cpp">
       <Filter>socket</Filter>
     </ClCompile>
+    <ClCompile Include="json\json_reader.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_value.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="json\json_writer.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="json\json_internalarray.inl">
+      <Filter>json</Filter>
+    </None>
+    <None Include="json\json_internalmap.inl">
+      <Filter>json</Filter>
+    </None>
+    <None Include="json\json_valueiterator.inl">
+      <Filter>json</Filter>
+    </None>
   </ItemGroup>
 </Project>
