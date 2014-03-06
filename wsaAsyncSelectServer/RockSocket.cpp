@@ -84,6 +84,8 @@ private:
 	SOCKET						ListenSocket;
 
 	RockSocketSink				*sinkPtr;
+
+	unsigned long				clientCount;
 public:
 	Impl(RockSocket *_this)
 	{
@@ -96,6 +98,7 @@ public:
 		enServerStat = SSNobind;
 		workWnd = NULL;
 		sinkPtr = nullptr;
+		clientCount = 0;
 	}
 
 	~Impl()
@@ -118,6 +121,11 @@ public:
 			{
 				SendMessage(workWnd, WM_CLOSE,NULL,NULL);
 			}
+		}
+		while (SocketInfoList)
+		{
+			OutputDebugStringA(MAKESTR(SocketInfoList));
+			FreeSocketInformation(SocketInfoList->Socket);
 		}
 	}
 	void loadConfig(string & strPath)
@@ -371,16 +379,24 @@ public:
 		if ((Accept = accept(wParam, NULL, NULL)) == INVALID_SOCKET)
 		{
 			OutputDebugStringA(MAKESTR("accept() failed with error " << WSAGetLastError() << "\n"));
+			return;
 		}
 		else
 			OutputDebugStringA("accept() is OK!\n");
 		// Create a socket information structure to associate with the socket for processing I/O
-
-		RockSocket::Impl::CreateSocketInformation(Accept);
+		CreateSocketInformation(Accept);
 
 		OutputDebugStringA(MAKESTR("Socket number "<< Accept<<" connected\n"));
 
 		WSAAsyncSelect(Accept, workWnd, WM_SOCKET_NOTIFY, FD_READ | FD_WRITE | FD_CLOSE);
+
+		++clientCount;
+
+		if (sinkPtr)
+		{
+			sinkPtr->onAccept(Accept);
+		}
+		
 	}
 
 	int onRead(WPARAM wParam, LPARAM lParam)
@@ -422,6 +438,10 @@ public:
 			}
 		}
 
+		if (sinkPtr)
+		{
+			sinkPtr->onRead(SocketInfo->DataBuf.buf, RecvBytes);
+		}
 	}
 
 	int onWrite(WPARAM wParam, LPARAM lParam)
@@ -471,7 +491,12 @@ public:
 
 	void onClose(WPARAM wParam, LPARAM lParam)
 	{
-
+		RockSocket::Impl::FreeSocketInformation(wParam);
+		std::cout<< clientCount-- << std::endl;
+		if (sinkPtr)
+		{
+			sinkPtr->onclose();
+		}
 	}	
 
 	void setSink(RockSocketSink* ptr)
@@ -577,7 +602,6 @@ LRESULT RockSocket::wndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case FD_CLOSE:
 				onClose(wParam, lParam);
 				OutputDebugStringA(MAKESTR("Closing socket " << wParam << "\n"));
-				RockSocket::Impl::FreeSocketInformation(wParam);
 				break;
 			}
 		}

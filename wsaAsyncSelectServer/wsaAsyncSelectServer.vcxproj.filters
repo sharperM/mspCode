@@ -60,6 +60,12 @@
     <ClInclude Include="json\json\writer.h">
       <Filter>json</Filter>
     </ClInclude>
+    <ClInclude Include="CompilingHelperServer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleServer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -79,6 +85,12 @@
     </ClCompile>
     <ClCompile Include="json\json_writer.cpp">
       <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="CompilingHelperServer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleServer.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
