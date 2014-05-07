@@ -5,10 +5,15 @@
 #include "Win32Project1.h"
 #include <CommCtrl.h>
 #include "RockSocket.h"
+#include <Vfw.h>
+#include <stdio.h>
+#include <windowsx.h>
+#include <dshow.h>
+#include "DStest.h"
 
-
-
-
+#pragma comment(lib, "Strmiids.lib")
+#pragma comment(lib, "Quartz.lib")
+#pragma comment(lib, "Vfw32.lib")
 //#pragma comment(lib, "gdiplus.lib")
 //using namespace Gdiplus;
 #define MAX_LOADSTRING 100
@@ -94,6 +99,39 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	return RegisterClassEx(&wcex);
 }
 
+unsigned long er = 0;
+static LRESULT WINAPI FrameCallbackProc(HWND hWnd, LPVIDEOHDR lpVHdr)
+{
+	unsigned char *data;
+	data = lpVHdr->lpData;//获得视频数据首地址，并将数据存入data数组中以便处理
+	char temp[128];
+	er++;
+	sprintf_s(temp, 128, "%ld\n", er);
+	OutputDebugString(temp);
+	//lpVHdr->dwBufferLength
+	//Gdiplus::Bitmap bitmap()
+
+	//lpVHdr->dwBytesUsed;
+	//而大小保存在lpVHdr->dwBytesUsed
+	return 0;
+}
+
+static LRESULT WINAPI FrameCallbackProc2(HWND hWnd, LPVIDEOHDR lpVHdr)
+{
+	unsigned char *data;
+	data = lpVHdr->lpData;//获得视频数据首地址，并将数据存入data数组中以便处理
+	char temp[128];
+	er++;
+	sprintf_s(temp, 128, "2__%ld\n", er);
+	OutputDebugString(temp);
+	//lpVHdr->dwBufferLength
+	//Gdiplus::Bitmap bitmap()
+
+	//lpVHdr->dwBytesUsed;
+	//而大小保存在lpVHdr->dwBytesUsed
+	return 0;
+}
+
 //
 //   函数:  InitInstance(HINSTANCE, int)
 //
@@ -126,7 +164,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    SendMessage(hotkeyControl, WM_SETFONT, (WPARAM)font, NULL);
 
    HWND testButton = ::CreateWindow(TEXT("button"), TEXT("test"), WS_VISIBLE | WS_CHILD, 0, 240, 80, 30, hWnd, (HMENU)1, hInstance, NULL);
+   
+   HWND testStatic =  CreateWindow(_T("STATIC"), "", WS_CHILD | WS_VISIBLE, 0, 300, 250, 250, hWnd, NULL, hInstance,NULL);
 
+   DStest ddtest;
+   HWND hWndC = ddtest.vfwCapture(testStatic);
+   capSetCallbackOnFrame(hWndC, &FrameCallbackProc);
+   capSetCallbackOnVideoStream(hWndC, &FrameCallbackProc2);
+   //ShowWindow(hWndC, SW_HIDE);
+
+
+   
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
    

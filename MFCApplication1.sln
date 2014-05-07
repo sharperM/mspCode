@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IOComplete", "IOComplete\IO
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wsaAsyncSelectServer", "wsaAsyncSelectServer\wsaAsyncSelectServer.vcxproj", "{5ED62111-321D-49F7-BEFA-510D582E145E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleCode", "SampleCode\SampleCode.vcxproj", "{2D5241AE-8250-491C-9517-6ED7FCDF17B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -87,6 +89,10 @@ Global
 		{5ED62111-321D-49F7-BEFA-510D582E145E}.Debug|Win32.Build.0 = Debug|Win32
 		{5ED62111-321D-49F7-BEFA-510D582E145E}.Release|Win32.ActiveCfg = Release|Win32
 		{5ED62111-321D-49F7-BEFA-510D582E145E}.Release|Win32.Build.0 = Release|Win32
+		{2D5241AE-8250-491C-9517-6ED7FCDF17B3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2D5241AE-8250-491C-9517-6ED7FCDF17B3}.Debug|Win32.Build.0 = Debug|Win32
+		{2D5241AE-8250-491C-9517-6ED7FCDF17B3}.Release|Win32.ActiveCfg = Release|Win32
+		{2D5241AE-8250-491C-9517-6ED7FCDF17B3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

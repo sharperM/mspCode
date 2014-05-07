@@ -15,13 +15,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 
 		if (Ret == -1)
-
 		{
-
 			printf("\nGetMessage() failed with error %d\n", GetLastError());
-
 			return 1;
-
 		}
 
 		else
@@ -35,7 +31,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		TranslateMessage(&msg);
 
 		printf("Dispatching a message...\n");
-
+		
 		DispatchMessage(&msg);
 	}
 }
