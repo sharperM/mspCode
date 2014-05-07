@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #pragma comment (lib, "Ws2_32.lib")
 
-
+//#define SHOW_INFO
 // Description:
 
 //    This sample is the echo client. It connects to the TCP server,
@@ -212,8 +212,11 @@ int main(int argc, char **argv)
 	}
 
 	else
-
+#ifdef SHOW_INFO
 		printf("Winsock library loaded successfully!\n");
+#else
+		;
+#endif
 
 
 
@@ -236,9 +239,11 @@ int main(int argc, char **argv)
 	}
 
 	else
-
+#ifdef SHOW_INFO
 		printf("socket() looks fine!\n");
-
+#else
+		;
+#endif
 
 
 	server.sin_family = AF_INET;
@@ -269,8 +274,12 @@ int main(int argc, char **argv)
 		}
 
 		else
-
+#ifdef SHOW_INFO
 			printf("The hostname resolved successfully!\n");
+
+#else
+			;
+#endif
 
 
 
@@ -291,14 +300,18 @@ int main(int argc, char **argv)
 	}
 
 	else
-
+#ifdef SHOW_INFO
 		printf("connect() is pretty damn fine!\n");
-
-
-
 	// Send and receive data
 
 	printf("Sending and receiving data if any...\n");
+
+
+#else
+		;
+#endif
+
+
 
 
 
@@ -323,8 +336,12 @@ int main(int argc, char **argv)
 		}
 
 
-
+#ifdef SHOW_INFO
 		printf("send() should be fine. Send %d bytes\n", ret);
+
+#else
+		;
+#endif
 
 		if (!bSendOnly)
 
@@ -335,8 +352,12 @@ int main(int argc, char **argv)
 			if (ret == 0)        // Graceful close
 
 			{
-
+#ifdef SHOW_INFO
 				printf("It is a graceful close!\n");
+
+#else
+				;
+#endif
 
 				break;
 
@@ -353,8 +374,12 @@ int main(int argc, char **argv)
 			}
 
 			szBuffer[ret] = '\0';
-
+#ifdef SHOW_INFO
 			printf("recv() is OK. Received %d bytes: %s\n", ret, szBuffer);
+
+#else
+			;
+#endif
 
 		}
 
@@ -363,8 +388,12 @@ int main(int argc, char **argv)
 
 
 	if (closesocket(sClient) == 0)
-
+#ifdef SHOW_INFO
 		printf("closesocket() is OK!\n");
+
+#else
+		;
+#endif
 
 	else
 
@@ -373,8 +402,11 @@ int main(int argc, char **argv)
 
 
 	if (WSACleanup() == 0)
-
+#ifdef SHOW_INFO
 		printf("WSACleanup() is fine!\n");
+#else
+		;
+#endif
 
 	else
 

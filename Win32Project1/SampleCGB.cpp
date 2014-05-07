@@ -17,7 +17,6 @@
 #include "ksproxy.h"
 
 #include  "SampleCGB.h"
-#include <assert.h>
 
 //
 //  ISampleCaptureGraphBuilder is trying to connect the video pin to the MPEG2 demux.
