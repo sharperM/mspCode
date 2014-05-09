@@ -82,6 +82,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dshowutil.h" />
     <ClInclude Include="DStest.h" />
     <ClInclude Include="json\json\autolink.h" />
     <ClInclude Include="json\json\config.h" />

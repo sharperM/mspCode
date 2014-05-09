@@ -75,6 +75,9 @@
     <ClInclude Include="SampleCGB.h">
       <Filter>camera</Filter>
     </ClInclude>
+    <ClInclude Include="dshowutil.h">
+      <Filter>camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

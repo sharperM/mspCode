@@ -395,10 +395,10 @@ BOOL ISampleCaptureGraphBuilder::IsMPEG2Pin( IPin *pPin )
             )
         )
         {
-            //DeleteMediaType( mediaType );
+            DeleteMediaType( mediaType );
             return TRUE;
         }
-        //DeleteMediaType( mediaType );
+        DeleteMediaType( mediaType );
     }
 
     return FALSE;
@@ -716,10 +716,10 @@ BOOL ISampleCaptureGraphBuilder::HasMediaType(IPin *pPin,  REFGUID majorType )
     {
         if( ::IsEqualGUID( mediaType->majortype, majorType ) )
         {
-            //DeleteMediaType( mediaType );
+            DeleteMediaType( mediaType );
             return TRUE;
         }
-        //DeleteMediaType( mediaType );
+        DeleteMediaType( mediaType );
     }
 
     return FALSE;

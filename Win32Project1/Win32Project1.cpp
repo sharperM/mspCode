@@ -164,13 +164,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    SendMessage(hotkeyControl, WM_SETFONT, (WPARAM)font, NULL);
 
    HWND testButton = ::CreateWindow(TEXT("button"), TEXT("test"), WS_VISIBLE | WS_CHILD, 0, 240, 80, 30, hWnd, (HMENU)1, hInstance, NULL);
-   
-   HWND testStatic =  CreateWindow(_T("STATIC"), "", WS_CHILD | WS_VISIBLE, 0, 300, 250, 250, hWnd, NULL, hInstance,NULL);
+   HWND startPreviewButton = ::CreateWindow(TEXT("button"), TEXT("start preview"), WS_VISIBLE | WS_CHILD, 90, 240, 80, 30, hWnd, (HMENU)2, hInstance, NULL);
+   HWND stopPreviewButton = ::CreateWindow(TEXT("button"), TEXT("stop preview"), WS_VISIBLE | WS_CHILD, 180, 240, 80, 30, hWnd, (HMENU)3, hInstance, NULL);
+   HWND testStatic = CreateWindow(_T("STATIC"), "", WS_CHILD | WS_VISIBLE, 0, 300, 250, 250, hWnd, NULL, hInstance, NULL);
 
    DStest ddtest;
-   HWND hWndC = ddtest.vfwCapture(testStatic);
-   capSetCallbackOnFrame(hWndC, &FrameCallbackProc);
-   capSetCallbackOnVideoStream(hWndC, &FrameCallbackProc2);
+//    HWND hWndC = ddtest.vfwCapture(testStatic);
+//    capSetCallbackOnFrame(hWndC, &FrameCallbackProc);
+//    capSetCallbackOnVideoStream(hWndC, &FrameCallbackProc2);
+   DStest::instance().test2(testStatic);
    //ShowWindow(hWndC, SW_HIDE);
 
 
@@ -217,7 +219,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				RockSocket::instance();
 			}
 
-			break;
+			break;		
+		case 2:
+				if (wmEvent == BN_CLICKED)
+				{
+					DStest::instance().StartPreview();
+				}
+				break;		
+		case 3:
+				if (wmEvent == BN_CLICKED)
+				{
+					DStest::instance().StopPreview();
+				}
+
+				break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}

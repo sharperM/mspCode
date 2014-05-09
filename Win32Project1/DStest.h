@@ -1,5 +1,5 @@
 #include <windows.h>
-#include <dshow.h>
+#include "dshowutil.h"
 #include <Vfw.h>
 #include <atlbase.h>
 
@@ -27,6 +27,7 @@ if ((mt).pUnk != NULL)                        \
 
 class DStest{
 private:
+	
 private:
 	//    IplImage * m_pFrame;
 	Image* m_image;
@@ -51,6 +52,7 @@ private:
 	ICreateDevEnum *pCreateDevEnum = 0;
 
 	ISampleCaptureGraphBuilder *pBuilder;
+	//ISampleGrabber*	psamplebuilder
 	IVideoWindow *pVW;
 	IMediaEventEx *pME;
 	IAMDroppedFrames *pDF;
@@ -120,6 +122,7 @@ public:
 public:
 	DStest();
 	~DStest();
+	static DStest& instance();
 	void initCarema();
 	void startCapture();
 	void getPic();
@@ -129,10 +132,11 @@ public:
 	HWND vfwCapture(HWND parent);
 	HRESULT test();
 
-	HRESULT test2();
+	HRESULT test2(HWND parent);
 	void AddDevicesToMenu();
 	void IMonRelease(IMoniker *&pm);
-	void ChooseDevices(IMoniker *pmVideo, IMoniker *pmAudio);
+	void ChooseDevices(IMoniker *pmVideo, IMoniker *pmAudio, HWND parent);
+	void ChooseDevices(HWND parent);
 	void FreeCapFilters();
 	BOOL InitCapFilters();
 	BOOL MakeGraph();
@@ -142,4 +146,4 @@ public:
 	BOOL StopPreview();
 	void TearDownGraph();
 	void RemoveDownstream(IBaseFilter *pf);
-};
+ };

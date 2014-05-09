@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "DStest.h"
 #include<set>
-#include <assert.h>
 
 #pragma comment(lib, "strmiids")
 #pragma comment(lib, "Vfw32.lib")
@@ -9,8 +8,9 @@ DStest::DStest()
 : pBuilder(NULL), pVW(NULL), pME(NULL), pDF(NULL), pVC(NULL), pDlg(NULL),
 pASC(NULL), pVSC(NULL), pRender(NULL), pVCap(NULL), pACap(NULL), pFg(NULL),
 pSink(NULL), pConfigAviMux(NULL), pmAudio(NULL), pmVideo(NULL), 
-fDeviceMenuPopulated(FALSE), iNumVCapDevices(0)
+fDeviceMenuPopulated(FALSE), iNumVCapDevices(0), fPreviewing(FALSE)
 {
+	fWantPreview = TRUE;
 	m_bConnected = false;
 	m_nWidth = 0;
 	m_nHeight = 0;
@@ -613,10 +613,12 @@ bool DStest::OpenCamera(int nCamID, bool bDisplayProperties /*= true*/, int nWid
 
 }
 
-HRESULT DStest::test2()
+HRESULT DStest::test2(HWND parent)
 {
-	HRESULT hr;
-	return 0;
+	HRESULT hr = 0;
+	AddDevicesToMenu();
+	ChooseDevices(parent);
+	return hr;
 }
 //枚举设备 填充 rgpmAudioMenu，rgpmVideoMenu
 void DStest::AddDevicesToMenu()
@@ -754,7 +756,7 @@ void DStest::IMonRelease(IMoniker *&pm)
 	}
 }
 
-void DStest::ChooseDevices(IMoniker *pmVideo, IMoniker *pmAudio)
+void DStest::ChooseDevices(IMoniker *pmVideo, IMoniker *pmAudio, HWND parent)
 {
 #define VERSIZE 40
 #define DESCSIZE 80
@@ -777,8 +779,8 @@ void DStest::ChooseDevices(IMoniker *pmVideo, IMoniker *pmAudio)
 			pmAudio->AddRef();
 		}
 
-		IMonRelease(pmVideo);
-		IMonRelease(pmAudio);
+		IMonRelease(this->pmVideo);
+		IMonRelease(this->pmAudio);
 		this->pmVideo = pmVideo;
 		this->pmAudio = pmAudio;
 
@@ -792,7 +794,7 @@ void DStest::ChooseDevices(IMoniker *pmVideo, IMoniker *pmAudio)
 
 		if (fWantPreview)   // were we previewing?
 		{
-			//BuildPreviewGraph();
+			BuildPreviewGraph(parent);
 			StartPreview();
 		}
 
@@ -993,7 +995,7 @@ BOOL DStest::InitCapFilters()
 			fCapAudioIsRelevant = FALSE;
 			fCapAudio = FALSE;
 		}
-		//DeleteMediaType(pmt);
+		DeleteMediaType(pmt);
 	}
 
 	// we use this interface to bring up the 3 dialogs
@@ -1392,7 +1394,7 @@ BOOL DStest::BuildPreviewGraph(HWND parent)
 					;
 					//ErrMsg(TEXT("%x: Cannot set frame rate for preview"), hr);
 			}
-			//DeleteMediaType(pmt);
+			DeleteMediaType(pmt);
 		}
 	}
 
@@ -1582,4 +1584,148 @@ void DStest::RemoveDownstream(IBaseFilter *pf)
 		pins->Release();
 }
 
+ 
+void DStest::ChooseDevices(HWND parent)
+{
+	WCHAR wszVideo[1024], wszAudio[1024];
+	ZeroMemory(wszVideo, NUMELMS(wszVideo));
+	ZeroMemory(wszAudio, NUMELMS(wszAudio));
 
+// 	StringCchCopyN(wszVideo, NUMELMS(wszVideo), szVideo, NUMELMS(wszVideo) - 1);
+// 	StringCchCopyN(wszAudio, NUMELMS(wszAudio), szAudio, NUMELMS(wszAudio) - 1);
+// 	wszVideo[1023] = wszAudio[1023] = 0;    // Null-terminate
+
+// 	IBindCtx *lpBC = 0;
+ 	IMoniker *pmVideo = 0, *pmAudio = 0;
+// 
+// 	HRESULT hr = CreateBindCtx(0, &lpBC);
+// 	if (SUCCEEDED(hr))
+// 	{
+// 		DWORD dwEaten;
+// 		hr = MkParseDisplayName(lpBC, wszVideo, &dwEaten, &pmVideo);
+// 		hr = MkParseDisplayName(lpBC, wszAudio, &dwEaten, &pmAudio);
+// 
+// 		lpBC->Release();
+// 	}
+// 
+	// Handle the case where the video capture device used for the previous session
+	// is not available now.
+	BOOL bFound = FALSE;
+
+	if (pmVideo != NULL)
+	{
+		for (int i = 0; i < NUMELMS(rgpmVideoMenu); i++)
+		{
+			if (rgpmVideoMenu[i] != NULL &&
+				S_OK == rgpmVideoMenu[i]->IsEqual(pmVideo))
+			{
+				bFound = TRUE;
+				break;
+			}
+		}
+	}
+
+	if (!bFound)
+	{
+		if (iNumVCapDevices > 0)
+		{
+			IMonRelease(pmVideo);
+			ASSERT(rgpmVideoMenu[0] != NULL);
+			pmVideo = rgpmVideoMenu[0];
+			pmVideo->AddRef();
+		}
+		else
+			goto CleanUp;
+	}
+
+	ChooseDevices(pmVideo, pmAudio,parent);
+
+CleanUp:
+	IMonRelease(pmVideo);
+	IMonRelease(pmAudio);
+}
+
+DStest& DStest::instance()
+{
+	static DStest singleton;
+	return  singleton;
+}
+
+
+// BOOL DStest::CaptureBitmap(const char* outFile)//const char * outFile 
+// {
+// 	HRESULT hr = 0;
+// 
+// 	//取得当前所连接媒体的类型
+// 
+// 	AM_MEDIA_TYPE mt;
+// 	ISampleGrabberCB;
+// 	hr = psamplebuilder->GetConnectedMediaType(&mt);
+// 
+// 	// Examine the format block. 
+// 
+// 	VIDEOINFOHEADER *pVih;
+// 
+// 	if ((mt.formattype == FORMAT_VideoInfo) && (mt.cbFormat >= sizeof(VIDEOINFOHEADER)) && (mt.pbFormat != NULL))
+// 	{
+// 		pVih = (VIDEOINFOHEADER*)mt.pbFormat;
+// 	}
+// 	else
+// 	{
+// 		// Wrong format. Free the format block and return an error.    
+// 		return VFW_E_INVALIDMEDIATYPE;
+// 	}
+// 	// Set one-shot mode and buffering. 
+// 	hr = pGrabber->SetOneShot(TRUE);
+// 	if (SUCCEEDED(pGrabber->SetBufferSamples(TRUE)))
+// 	{
+// 		bool pass = false;
+// 		m_pMC->Run();
+// 		long EvCode = 0;
+// 		hr = pEvent->WaitForCompletion(INFINITE, &EvCode);
+// 		//find the required buffer size 
+// 		long   cbBuffer = 0;
+// 		if (SUCCEEDED(pGrabber->GetCurrentBuffer(&cbBuffer, NULL)))
+// 		{
+// 			//Allocate the array and call the method a second time to copy the buffer: 
+// 			char *pBuffer = new char[cbBuffer];
+// 			if (!pBuffer)
+// 			{
+// 				// Out of memory. Return an error code. 
+// 				AfxMessageBox(_T("Out of Memory"));
+// 			}
+// 			hr = pGrabber->GetCurrentBuffer(&cbBuffer, (long*)(pBuffer));
+// 			//写到BMP文件中
+// 			HANDLE hf = CreateFile(LPCTSTR(outFile), GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, 0, NULL);
+// 			if (hf == INVALID_HANDLE_VALUE)
+// 			{
+// 				return 0;
+// 			}
+// 			// Write the file header. 
+// 			BITMAPFILEHEADER bfh;
+// 			ZeroMemory(&bfh, sizeof(bfh));
+// 			bfh.bfType = 'MB';  // Little-endian for "MB". 
+// 			bfh.bfSize = sizeof(bfh)+cbBuffer + sizeof(BITMAPINFOHEADER);
+// 			bfh.bfOffBits = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
+// 			DWORD dwWritten = 0;
+// 			WriteFile(hf, &bfh, sizeof(bfh), &dwWritten, NULL);
+// 			// Write the bitmap format 
+// 			BITMAPINFOHEADER bih;
+// 			ZeroMemory(&bih, sizeof(bih));
+// 			bih.biSize = sizeof(bih);
+// 			bih.biWidth = pVih->bmiHeader.biWidth;
+// 			bih.biHeight = pVih->bmiHeader.biHeight;
+// 			bih.biPlanes = pVih->bmiHeader.biPlanes;
+// 			bih.biBitCount = pVih->bmiHeader.biBitCount;
+// 			dwWritten = 0;
+// 			WriteFile(hf, &bih, sizeof(bih), &dwWritten, NULL);
+// 			//write the bitmap bits 
+// 			dwWritten = 0;
+// 			WriteFile(hf, pBuffer, cbBuffer, &dwWritten, NULL);
+// 			CloseHandle(hf);
+// 			pass = true;
+// 		}
+// 		return pass;
+// 	}
+// 	hr = pGrabber->SetOneShot(FALSE);
+// }
