@@ -29,6 +29,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IOComplete", "IOComplete\IO
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wsaAsyncSelectServer", "wsaAsyncSelectServer\wsaAsyncSelectServer.vcxproj", "{5ED62111-321D-49F7-BEFA-510D582E145E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "directshowTest", "directshowTest\directshowTest.vcxproj", "{60828310-CBEE-4A0F-B21F-A8F6B53C9474}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commandCamera", "commandCamera\commandCamera.vcxproj", "{FEBACCC4-8916-43E8-ADEA-99D0350538FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -87,6 +91,14 @@ Global
 		{5ED62111-321D-49F7-BEFA-510D582E145E}.Debug|Win32.Build.0 = Debug|Win32
 		{5ED62111-321D-49F7-BEFA-510D582E145E}.Release|Win32.ActiveCfg = Release|Win32
 		{5ED62111-321D-49F7-BEFA-510D582E145E}.Release|Win32.Build.0 = Release|Win32
+		{60828310-CBEE-4A0F-B21F-A8F6B53C9474}.Debug|Win32.ActiveCfg = Debug|Win32
+		{60828310-CBEE-4A0F-B21F-A8F6B53C9474}.Debug|Win32.Build.0 = Debug|Win32
+		{60828310-CBEE-4A0F-B21F-A8F6B53C9474}.Release|Win32.ActiveCfg = Release|Win32
+		{60828310-CBEE-4A0F-B21F-A8F6B53C9474}.Release|Win32.Build.0 = Release|Win32
+		{FEBACCC4-8916-43E8-ADEA-99D0350538FD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FEBACCC4-8916-43E8-ADEA-99D0350538FD}.Debug|Win32.Build.0 = Debug|Win32
+		{FEBACCC4-8916-43E8-ADEA-99D0350538FD}.Release|Win32.ActiveCfg = Release|Win32
+		{FEBACCC4-8916-43E8-ADEA-99D0350538FD}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

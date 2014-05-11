@@ -19,6 +19,9 @@
     <Filter Include="json\include">
       <UniqueIdentifier>{24151ccb-1171-437c-aea7-1e3620372557}</UniqueIdentifier>
     </Filter>
+    <Filter Include="camera">
+      <UniqueIdentifier>{78931410-7d05-4638-8c13-3683812e533b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -66,6 +69,12 @@
     <ClInclude Include="json\json\writer.h">
       <Filter>json\include</Filter>
     </ClInclude>
+    <ClInclude Include="DStest.h">
+      <Filter>camera</Filter>
+    </ClInclude>
+    <ClInclude Include="SampleCGB.h">
+      <Filter>camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -88,6 +97,12 @@
     </ClCompile>
     <ClCompile Include="json\json_writer.cpp">
       <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="DStest.cpp">
+      <Filter>camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SampleCGB.cpp">
+      <Filter>camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
