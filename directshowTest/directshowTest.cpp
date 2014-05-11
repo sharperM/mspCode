@@ -1,21 +1,10 @@
-// Win32Project1.cpp : 定义应用程序的入口点。
+// directshowTest.cpp : 定义应用程序的入口点。
 //
 
 #include "stdafx.h"
-#include "Win32Project1.h"
-#include <CommCtrl.h>
-#include "RockSocket.h"
-#include <Vfw.h>
-#include <stdio.h>
-#include <windowsx.h>
-#include <dshow.h>
-#include "DStest.h"
+#include "directshowTest.h"
+#include "DSCapture.h"
 
-#pragma comment(lib, "Strmiids.lib")
-#pragma comment(lib, "Quartz.lib")
-#pragma comment(lib, "Vfw32.lib")
-//#pragma comment(lib, "gdiplus.lib")
-//using namespace Gdiplus;
 #define MAX_LOADSTRING 100
 
 // 全局变量: 
@@ -43,12 +32,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	// 初始化全局字符串
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	LoadString(hInstance, IDC_WIN32PROJECT1, szWindowClass, MAX_LOADSTRING);
+	LoadString(hInstance, IDC_DIRECTSHOWTEST, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
-
-//	ULONG_PTR m_gdiplusToken;
-//	GdiplusStartupInput gdiplusStartupInput;
-//	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
 
 	// 执行应用程序初始化: 
 	if (!InitInstance (hInstance, nCmdShow))
@@ -56,7 +41,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WIN32PROJECT1));
+	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_DIRECTSHOWTEST));
 
 	// 主消息循环: 
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -89,47 +74,14 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= hInstance;
-	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WIN32PROJECT1));
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DIRECTSHOWTEST));
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_WIN32PROJECT1);
+	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_DIRECTSHOWTEST);
 	wcex.lpszClassName	= szWindowClass;
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
 	return RegisterClassEx(&wcex);
-}
-
-unsigned long er = 0;
-static LRESULT WINAPI FrameCallbackProc(HWND hWnd, LPVIDEOHDR lpVHdr)
-{
-	unsigned char *data;
-	data = lpVHdr->lpData;//获得视频数据首地址，并将数据存入data数组中以便处理
-	char temp[128];
-	er++;
-	sprintf_s(temp, 128, "%ld\n", er);
-	OutputDebugString(temp);
-	//lpVHdr->dwBufferLength
-	//Gdiplus::Bitmap bitmap()
-
-	//lpVHdr->dwBytesUsed;
-	//而大小保存在lpVHdr->dwBytesUsed
-	return 0;
-}
-
-static LRESULT WINAPI FrameCallbackProc2(HWND hWnd, LPVIDEOHDR lpVHdr)
-{
-	unsigned char *data;
-	data = lpVHdr->lpData;//获得视频数据首地址，并将数据存入data数组中以便处理
-	char temp[128];
-	er++;
-	sprintf_s(temp, 128, "2__%ld\n", er);
-	OutputDebugString(temp);
-	//lpVHdr->dwBufferLength
-	//Gdiplus::Bitmap bitmap()
-
-	//lpVHdr->dwBytesUsed;
-	//而大小保存在lpVHdr->dwBytesUsed
-	return 0;
 }
 
 //
@@ -155,31 +107,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
       return FALSE;
    }
-   HWND hotkeyControl = ::CreateWindow(HOTKEY_CLASS, TEXT("test"), WS_VISIBLE|WS_CHILD|WS_BORDER, 0, 0, 590, 230, hWnd, NULL, hInstance, NULL);
-   HFONT font = CreateFont(19, 12, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-	   CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("宋体"));
- //  (_In_ int cHeight, _In_ int cWidth, _In_ int cEscapement, _In_ int cOrientation, _In_ int cWeight, _In_ DWORD bItalic,
-//	   _In_ DWORD bUnderline, _In_ DWORD bStrikeOut, _In_ DWORD iCharSet, _In_ DWORD iOutPrecision, _In_ DWORD iClipPrecision,
-//	   _In_ DWORD iQuality, _In_ DWORD iPitchAndFamily, _In_opt_ LPCWSTR pszFaceName);   
-   SendMessage(hotkeyControl, WM_SETFONT, (WPARAM)font, NULL);
 
-   HWND testButton = ::CreateWindow(TEXT("button"), TEXT("test"), WS_VISIBLE | WS_CHILD, 0, 240, 80, 30, hWnd, (HMENU)1, hInstance, NULL);
-   HWND startPreviewButton = ::CreateWindow(TEXT("button"), TEXT("start preview"), WS_VISIBLE | WS_CHILD, 90, 240, 80, 30, hWnd, (HMENU)2, hInstance, NULL);
-   HWND stopPreviewButton = ::CreateWindow(TEXT("button"), TEXT("stop preview"), WS_VISIBLE | WS_CHILD, 180, 240, 80, 30, hWnd, (HMENU)3, hInstance, NULL);
-   HWND testStatic = CreateWindow(_T("STATIC"), "", WS_CHILD | WS_VISIBLE, 0, 300, 250, 250, hWnd, NULL, hInstance, NULL);
+   HWND Button1 = ::CreateWindow(TEXT("button"), TEXT("startPreview"), WS_VISIBLE | WS_CHILD, 0, 480, 80, 30, hWnd, (HMENU)1, hInstance, NULL);
+   HWND Button2 = ::CreateWindow(TEXT("button"), TEXT("stopPreview"), WS_VISIBLE | WS_CHILD, 90, 480, 80, 30, hWnd, (HMENU)2, hInstance, NULL);
+   HWND Button3 = ::CreateWindow(TEXT("button"), TEXT("capturePic"), WS_VISIBLE | WS_CHILD, 180, 480, 80, 30, hWnd, (HMENU)3, hInstance, NULL);
+   HWND Button4 = ::CreateWindow(TEXT("button"), TEXT("capturePic"), WS_VISIBLE | WS_CHILD, 270, 480, 80, 30, hWnd, (HMENU)4, hInstance, NULL);
 
-   DStest ddtest;
-//    HWND hWndC = ddtest.vfwCapture(testStatic);
-//    capSetCallbackOnFrame(hWndC, &FrameCallbackProc);
-//    capSetCallbackOnVideoStream(hWndC, &FrameCallbackProc2);
-   DStest::instance().test2(testStatic);
-   //ShowWindow(hWndC, SW_HIDE);
+   HWND testStatic = ::CreateWindow(TEXT("STATIC"), TEXT(""), WS_CHILD | WS_VISIBLE, 0, 0,320, 240, hWnd, NULL, hInstance, NULL);
 
-
-   
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
-   
+   DSCapture::instance().openCamara(testStatic);
+
    return TRUE;
 }
 
@@ -193,6 +132,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY	- 发送退出消息并返回
 //
 //
+bool bvisble = true;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	int wmId, wmEvent;
@@ -216,23 +156,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case 1:
 			if (wmEvent == BN_CLICKED)
 			{
-				RockSocket::instance();
+				//startPreview
+				//openCamara()
+				DSCapture::instance().StartPreview();
 			}
-
 			break;
 		case 2:
-				if (wmEvent == BN_CLICKED)
-				{
-					DStest::instance().StartPreview();
-				}
-				break;		
+			if (wmEvent == BN_CLICKED)
+			{
+				//stopPreview
+				DSCapture::instance().StopPreview();
+			}
+			break;
 		case 3:
-				if (wmEvent == BN_CLICKED)
-				{
-					DStest::instance().StopPreview();
-				}
+			if (wmEvent == BN_CLICKED)
+			{
+				//capturePic
+				DSCapture::instance().captureImage();
+			}
+			break;
+		case 4:
+			if (wmEvent == BN_CLICKED)
+			{
+				//capturePic
+				DSCapture::instance().setWindowVisble(bvisble = !bvisble);
+			}
+			break;
 
-				break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
