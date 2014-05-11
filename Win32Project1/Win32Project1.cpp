@@ -116,6 +116,23 @@ static LRESULT WINAPI FrameCallbackProc(HWND hWnd, LPVIDEOHDR lpVHdr)
 	return 0;
 }
 
+unsigned long er = 0;
+static LRESULT WINAPI FrameCallbackProc(HWND hWnd, LPVIDEOHDR lpVHdr)
+{
+	unsigned char *data;
+	data = lpVHdr->lpData;//获得视频数据首地址，并将数据存入data数组中以便处理
+	char temp[128];
+	er++;
+	sprintf_s(temp, 128, "%ld\n", er);
+	OutputDebugString(temp);
+	//lpVHdr->dwBufferLength
+	//Gdiplus::Bitmap bitmap()
+
+	//lpVHdr->dwBytesUsed;
+	//而大小保存在lpVHdr->dwBytesUsed
+	return 0;
+}
+
 static LRESULT WINAPI FrameCallbackProc2(HWND hWnd, LPVIDEOHDR lpVHdr)
 {
 	unsigned char *data;
@@ -164,13 +181,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    SendMessage(hotkeyControl, WM_SETFONT, (WPARAM)font, NULL);
 
    HWND testButton = ::CreateWindow(TEXT("button"), TEXT("test"), WS_VISIBLE | WS_CHILD, 0, 240, 80, 30, hWnd, (HMENU)1, hInstance, NULL);
-   
-   HWND testStatic =  CreateWindow(_T("STATIC"), "", WS_CHILD | WS_VISIBLE, 0, 300, 250, 250, hWnd, NULL, hInstance,NULL);
+   HWND startPreviewButton = ::CreateWindow(TEXT("button"), TEXT("start preview"), WS_VISIBLE | WS_CHILD, 90, 240, 80, 30, hWnd, (HMENU)2, hInstance, NULL);
+   HWND stopPreviewButton = ::CreateWindow(TEXT("button"), TEXT("stop preview"), WS_VISIBLE | WS_CHILD, 180, 240, 80, 30, hWnd, (HMENU)3, hInstance, NULL);
+   HWND testStatic = CreateWindow(_T("STATIC"), "", WS_CHILD | WS_VISIBLE, 0, 300, 250, 250, hWnd, NULL, hInstance, NULL);
 
    DStest ddtest;
-   HWND hWndC = ddtest.vfwCapture(testStatic);
-   capSetCallbackOnFrame(hWndC, &FrameCallbackProc);
-   capSetCallbackOnVideoStream(hWndC, &FrameCallbackProc2);
+//    HWND hWndC = ddtest.vfwCapture(testStatic);
+//    capSetCallbackOnFrame(hWndC, &FrameCallbackProc);
+//    capSetCallbackOnVideoStream(hWndC, &FrameCallbackProc2);
+   DStest::instance().test2(testStatic);
    //ShowWindow(hWndC, SW_HIDE);
 
 
@@ -218,6 +237,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 
 			break;
+		case 2:
+				if (wmEvent == BN_CLICKED)
+				{
+					DStest::instance().StartPreview();
+				}
+				break;		
+		case 3:
+				if (wmEvent == BN_CLICKED)
+				{
+					DStest::instance().StopPreview();
+				}
+
+				break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}

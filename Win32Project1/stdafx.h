@@ -19,7 +19,7 @@
 #include <tchar.h>
 #define WM_GETIPMSG (WM_USER + 1)
 #define WM_SOCKET_NOTIFY (WM_USER + 2)
-#include <dshow.h>
+#include "dshowutil.h"
 #include <assert.h>
 
 
