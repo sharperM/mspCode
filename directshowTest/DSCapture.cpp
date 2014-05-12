@@ -20,6 +20,7 @@ DSCapture::DSCapture()
 
 DSCapture::~DSCapture()
 {
+	OnClose();
 }
 
 DSCapture& DSCapture::instance()
@@ -1173,6 +1174,9 @@ void DSCapture::FreeCapFilters()
 	SAFE_RELEASE(gcap.pVSC);
 	SAFE_RELEASE(gcap.pVC);
 	SAFE_RELEASE(gcap.pDlg);
+	SAFE_RELEASE(pSampleGrabberFilter);
+	SAFE_RELEASE(pSampleGrabber);
+	SAFE_RELEASE(pNullRenderer);
 
 // 	if (gcap.pCrossbar)
 // 	{
@@ -1381,4 +1385,16 @@ void DSCapture::MyMethod()
 void DSCapture::setWindowVisble(bool bVisible)
 {
 	gcap.pVW->put_Visible(bVisible ? OATRUE : OAFALSE);
+}
+
+
+void DSCapture::OnClose()
+{
+	// Destroy the filter graph and cleanup
+	StopPreview();
+	TearDownGraph();
+	FreeCapFilters();
+
+	gcap.pmVideo = NULL;
+	gcap.pmAudio = NULL;
 }

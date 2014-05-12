@@ -7,8 +7,8 @@
 class RockSocketSink
 {
 public:
-	virtual void onSocketAccept(){ ; }
-	virtual void onSocketRead(){ ; }
+	virtual void onSocketAccept(SOCKET accept){ ; }
+	virtual void onSocketRead(char * buf, unsigned long length){ ; }
 	virtual void onSocketclose(){ ; }
 };
 class RockSocket

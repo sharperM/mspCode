@@ -394,7 +394,7 @@ public:
 
 		if (sinkPtr)
 		{
-			sinkPtr->onAccept(Accept);
+			sinkPtr->onSocketAccept(Accept);
 		}
 		
 	}
@@ -440,7 +440,7 @@ public:
 
 		if (sinkPtr)
 		{
-			sinkPtr->onRead(SocketInfo->DataBuf.buf, RecvBytes);
+			sinkPtr->onSocketRead(SocketInfo->DataBuf.buf, RecvBytes);
 		}
 	}
 
@@ -495,7 +495,7 @@ public:
 		std::cout<< clientCount-- << std::endl;
 		if (sinkPtr)
 		{
-			sinkPtr->onclose();
+			sinkPtr->onSocketclose();
 		}
 	}	
 

@@ -36,6 +36,7 @@ public:
 	void MyMethod();
 
 	void setWindowVisble(bool bVisible);
+	void OnClose();
 	IBaseFilter *pSampleGrabberFilter = NULL;
 	DexterLib::ISampleGrabber *pSampleGrabber = NULL;
 	IBaseFilter *pNullRenderer = NULL;

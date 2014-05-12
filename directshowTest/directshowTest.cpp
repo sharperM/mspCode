@@ -94,6 +94,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //        在此函数中，我们在全局变量中保存实例句柄并
 //        创建和显示主程序窗口。
 //
+HWND testStatic = NULL;
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    HWND hWnd;
@@ -112,8 +113,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND Button2 = ::CreateWindow(TEXT("button"), TEXT("stopPreview"), WS_VISIBLE | WS_CHILD, 90, 480, 80, 30, hWnd, (HMENU)2, hInstance, NULL);
    HWND Button3 = ::CreateWindow(TEXT("button"), TEXT("capturePic"), WS_VISIBLE | WS_CHILD, 180, 480, 80, 30, hWnd, (HMENU)3, hInstance, NULL);
    HWND Button4 = ::CreateWindow(TEXT("button"), TEXT("capturePic"), WS_VISIBLE | WS_CHILD, 270, 480, 80, 30, hWnd, (HMENU)4, hInstance, NULL);
-
-   HWND testStatic = ::CreateWindow(TEXT("STATIC"), TEXT(""), WS_CHILD | WS_VISIBLE, 0, 0,320, 240, hWnd, NULL, hInstance, NULL);
+	
+   testStatic = ::CreateWindow(TEXT("STATIC"), TEXT(""), WS_CHILD | WS_VISIBLE, 0, 0,320, 240, hWnd, NULL, hInstance, NULL);
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
@@ -157,15 +158,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			if (wmEvent == BN_CLICKED)
 			{
 				//startPreview
-				//openCamara()
-				DSCapture::instance().StartPreview();
+//				DSCapture::instance().StartPreview();
+				DSCapture::instance().openCamara(testStatic);
 			}
 			break;
 		case 2:
 			if (wmEvent == BN_CLICKED)
 			{
 				//stopPreview
-				DSCapture::instance().StopPreview();
+				//DSCapture::instance().StopPreview();
+				DSCapture::instance().OnClose();
 			}
 			break;
 		case 3:
