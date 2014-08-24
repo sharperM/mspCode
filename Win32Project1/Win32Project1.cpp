@@ -10,7 +10,9 @@
 #include <windowsx.h>
 #include <dshow.h>
 #include "DStest.h"
-
+#include <map>
+#include <vector>
+#include <string>
 #pragma comment(lib, "Strmiids.lib")
 #pragma comment(lib, "Quartz.lib")
 #pragma comment(lib, "Vfw32.lib")
@@ -191,7 +193,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_COMMAND	- 处理应用程序菜单
 //  WM_PAINT	- 绘制主窗口
 //  WM_DESTROY	- 发送退出消息并返回
-//
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
