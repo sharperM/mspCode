@@ -10,7 +10,8 @@
 #include <windowsx.h>
 #include <dshow.h>
 #include "DStest.h"
-
+#include <iomanip>
+#include <sstream>
 #pragma comment(lib, "Strmiids.lib")
 #pragma comment(lib, "Quartz.lib")
 #pragma comment(lib, "Vfw32.lib")
@@ -36,7 +37,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
+	std::ostringstream ostrm;
+	ostrm << std::setfill('0') << std::setw(3) << 1;
+	std::string s = ostrm.str();
  	// TODO:  在此放置代码。
 	MSG msg;
 	HACCEL hAccelTable;

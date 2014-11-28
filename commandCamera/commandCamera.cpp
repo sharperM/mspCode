@@ -507,7 +507,7 @@ int main(int argc, char **argv)
 		bfh.bfOffBits = sizeof(BITMAPFILEHEADER)+cbBitmapInfoSize;
 
 		// Open output file
-		HANDLE hf = CreateFile(filename, GENERIC_WRITE,
+		HANDLE hf = CreateFileA(filename, GENERIC_WRITE,
 			FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, 0, NULL);
 		if (hf == INVALID_HANDLE_VALUE)
 			exit_message("Error opening output file", 1);

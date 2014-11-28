@@ -29,7 +29,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
  	// TODO:  在此放置代码。
 	MSG msg;
 	HACCEL hAccelTable;
-
+	unsigned s = sizeof(unsigned short);
 	// 初始化全局字符串
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_DIRECTSHOWTEST, szWindowClass, MAX_LOADSTRING);

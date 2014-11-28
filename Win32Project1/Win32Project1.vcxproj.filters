@@ -78,6 +78,9 @@
     <ClInclude Include="dshowutil.h">
       <Filter>camera</Filter>
     </ClInclude>
+    <ClInclude Include="testCode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -106,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="SampleCGB.cpp">
       <Filter>camera</Filter>
+    </ClCompile>
+    <ClCompile Include="testCode.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

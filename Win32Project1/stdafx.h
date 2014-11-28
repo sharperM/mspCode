@@ -22,6 +22,10 @@
 #include "dshowutil.h"
 #include <assert.h>
 
-
+#include <sstream>
+#include <string>
+using namespace std;
 // TODO:  在此处引用程序需要的其他头文件
 #endif // !defined(AFX_STDAFX_H__08E7CDC6_7F58_11D2_8CF1_00A0C9441E20__INCLUDED)
+
+#define MAKESTR(a) ((ostringstream&)(ostringstream()<<string()<<a)).str().c_str()

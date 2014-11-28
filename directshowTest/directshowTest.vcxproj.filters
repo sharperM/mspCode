@@ -42,6 +42,9 @@
     <ClInclude Include="SampleCGB.h">
       <Filter>directshow</Filter>
     </ClInclude>
+    <ClInclude Include="Webcam.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -55,6 +58,9 @@
     </ClCompile>
     <ClCompile Include="SampleCGB.cpp">
       <Filter>directshow</Filter>
+    </ClCompile>
+    <ClCompile Include="Webcam.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
