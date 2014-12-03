@@ -37,6 +37,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommandHttpClient", "Comman
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commandlineExcel2picture", "commandlineExcel2picture\commandlineExcel2picture.vcxproj", "{53EC376B-B383-420B-A0EC-B523F2B8A289}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProgramingWithLua", "ProgramingWithLua\ProgramingWithLua.vcxproj", "{36F861A2-F342-4563-AEBC-653D7BA7FCF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -111,6 +113,10 @@ Global
 		{53EC376B-B383-420B-A0EC-B523F2B8A289}.Debug|Win32.Build.0 = Debug|Win32
 		{53EC376B-B383-420B-A0EC-B523F2B8A289}.Release|Win32.ActiveCfg = Release|Win32
 		{53EC376B-B383-420B-A0EC-B523F2B8A289}.Release|Win32.Build.0 = Release|Win32
+		{36F861A2-F342-4563-AEBC-653D7BA7FCF2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{36F861A2-F342-4563-AEBC-653D7BA7FCF2}.Debug|Win32.Build.0 = Debug|Win32
+		{36F861A2-F342-4563-AEBC-653D7BA7FCF2}.Release|Win32.ActiveCfg = Release|Win32
+		{36F861A2-F342-4563-AEBC-653D7BA7FCF2}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
