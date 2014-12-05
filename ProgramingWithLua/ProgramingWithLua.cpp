@@ -212,11 +212,7 @@ int l_map(lua_State *L) {
 	}
 	return 0;  /* no results */
 }
-
-
-
-
-
+//在lua脚本 使用c的函数
 void useCfunction()
 {
 	//创建Lua虚拟机
@@ -243,7 +239,62 @@ void useCfunction()
 	lua_close(lua_state);
 }
 
-// 绑定 c++ 类
+
+
+//遍历栈 的 打印出 内容
+static void stackDump(lua_State *L) {
+	int i;
+	int top = lua_gettop(L); /* depth of the stack */
+	for (i = 1; i <= top; i++) { /* repeat for each level */
+		int t = lua_type(L, i);
+		switch (t) {
+		case LUA_TSTRING: { /* strings */
+							  printf("'%s'", lua_tostring(L, i));
+							  break;
+		}
+		case LUA_TBOOLEAN: { /* booleans */
+							   printf(lua_toboolean(L, i) ? "true" : "false");
+							   break;
+		}
+		case LUA_TNUMBER: { /* numbers */
+							  printf("%g", lua_tonumber(L, i));
+							  break;
+		}
+		default: { /* other values */
+					 printf("%s", lua_typename(L, t));
+					 break;
+		}
+		}
+		printf(" "); /* put a separator */
+	}
+	printf("\n"); /* end the listing */
+}
+
+//测试  堆栈 操作
+void testStack()
+{
+	cout << "-----------------" << endl;
+	lua_State *L = luaL_newstate();
+	lua_pushboolean(L, 1);
+	lua_pushnumber(L, 10);
+	lua_pushnil(L);
+	lua_pushstring(L, "hello");
+	stackDump(L);
+	/* true 10 nil 'hello' */
+	lua_pushvalue(L, -4); stackDump(L);//复制 指定索引值到栈顶 （负数从栈顶开始， 正数从栈底开始）
+	/* true 10 nil 'hello' true */
+	lua_replace(L, 3); stackDump(L);//用栈顶值替换指定索引值 并出栈
+	/* true 10 true 'hello' */
+	lua_settop(L, 6); stackDump(L);//设置栈的高度（深度）
+	/* true 10 true 'hello' nil nil */
+	lua_remove(L, -3); stackDump(L);//移出指定索引的值
+	/* true 10 true nil nil */
+	lua_settop(L, -5); stackDump(L);//设置栈的高度（深度） 负数表示减少
+	/* true */
+	lua_close(L);
+}
+
+// 绑定 c++ 类（在lua 脚本操作 c++ 对象）
 class Foo
 {
 public:
@@ -425,62 +476,6 @@ void BindingClass()
 
 }
 
-//遍历栈 的 打印出 内容
-static void stackDump(lua_State *L) {
-	int i;
-	int top = lua_gettop(L); /* depth of the stack */
-	for (i = 1; i <= top; i++) { /* repeat for each level */
-		int t = lua_type(L, i);
-		switch (t) {
-		case LUA_TSTRING: { /* strings */
-							  printf("'%s'", lua_tostring(L, i));
-							  break;
-		}
-		case LUA_TBOOLEAN: { /* booleans */
-							   printf(lua_toboolean(L, i) ? "true" : "false");
-							   break;
-		}
-		case LUA_TNUMBER: { /* numbers */
-							  printf("%g", lua_tonumber(L, i));
-							  break;
-		}
-		default: { /* other values */
-					 printf("%s", lua_typename(L, t));
-					 break;
-		}
-		}
-		printf(" "); /* put a separator */
-	}
-	printf("\n"); /* end the listing */
-}
-
-//测试  堆栈 操作
-void testStack()
-{
-	cout << "-----------------" << endl;
-	lua_State *L = luaL_newstate();
-	lua_pushboolean(L, 1);
-	lua_pushnumber(L, 10);
-	lua_pushnil(L);
-	lua_pushstring(L, "hello");
-	stackDump(L);
-	/* true 10 nil 'hello' */
-	lua_pushvalue(L, -4); stackDump(L);//复制 指定索引值到栈顶 （负数从栈顶开始， 正数从栈底开始）
-	/* true 10 nil 'hello' true */
-	lua_replace(L, 3); stackDump(L);//用栈顶值替换指定索引值 并出栈
-	/* true 10 true 'hello' */
-	lua_settop(L, 6); stackDump(L);//设置栈的高度（深度）
-	/* true 10 true 'hello' nil nil */
-	lua_remove(L, -3); stackDump(L);//移出指定索引的值
-	/* true 10 true nil nil */
-	lua_settop(L, -5); stackDump(L);//设置栈的高度（深度） 负数表示减少
-	/* true */
-	lua_close(L);
-}
-
-
-
-
 ////////////////////使用 类//////////////////////////////////////////////////////
 class CTest
 {
@@ -495,13 +490,13 @@ public:
 		cout << "deconstruct" << endl;
 	}
 
-	int Add(int x, int y)
+	double Add(double x, double y)
 	{
 		return x + y;
 	};
 	int m_x;
 };
-
+//提供lua 创建对象的函数
 static int CreateCTest(lua_State* L)
 {
 	// 创建一个元表为CTest的Table——Lua对象
@@ -511,7 +506,7 @@ static int CreateCTest(lua_State* L)
 	lua_setmetatable(L, -2);
 	return 1;
 }
-
+//提供lua 创建对象的函数
 static int DestoryCTest(lua_State* L)
 {
 	// 释放对象
@@ -589,8 +584,161 @@ void BindingClass2()
 
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////使用类2//////////////////////////////////////
 
+//  
+//@chenee: the class to be deal with;  
+//  
+class Animal{
+public:
+    Animal(std::string name) : age(0){ this->name = name; };
+    void setAge(int age) { this->age = age; };
+    int getAge(){ return this->age; };
+    void sound(){ cout << " -- Animal name:   " << this->name << "  and it's Age:" << this->age << endl; };
+private:
+    string name;
+    int age;
+};
+
+
+//  
+//@chenee: this class used as a tool to expose interfaces to lua  
+//  
+class LuaAnimal{
+	static const string className;
+	static const luaL_reg methods[];
+	static const luaL_reg methods_f[];
+	static int creat(lua_State *L)
+	{
+		string name(lua_tostring(L, 1));
+		Animal *a = new Animal(name);
+
+		void **p = (void**)lua_newuserdata(L, sizeof(void*));
+		*p = a;
+
+		luaL_getmetatable(L, className.c_str());
+		lua_setmetatable(L, -2);
+		return 1;
+	}
+	static int gc_animal(lua_State *L) {
+		Animal *a = (Animal*)(*(void**)lua_touserdata(L, 1));
+		delete a;
+		//        cout << "Gc ....." << endl;  
+		return 0;
+	}
+	static Animal* getAnimal(lua_State *L){
+		luaL_checktype(L, 1, LUA_TUSERDATA);
+		void *ud = luaL_checkudata(L, 1, className.c_str());
+		if (!ud){
+			luaL_typerror(L, 1, className.c_str());
+		}
+		return *(Animal**)ud;
+	}
+	static int sound(lua_State *L){
+		Animal *a = getAnimal(L);
+		a->sound();
+		return 1;
+	}
+	static int setAge(lua_State *L){
+		Animal *a = getAnimal(L);
+		double age = luaL_checknumber(L, 2);
+		a->setAge(int(age));
+		return 0;
+	}
+	static int getAge(lua_State *L){
+		Animal *a = getAnimal(L);
+		int age = a->getAge();
+		lua_pushinteger(L, age);
+		return 1;
+	}
+public:
+
+	static void Register(lua_State* L) {
+		//1: new methods talbe for L to save functions  
+		lua_newtable(L);
+		int methodtable = lua_gettop(L);
+		stackDump(L);
+		//2: new metatable for L to save "__index" "__newindex" "__gc" "__metatable" ...  
+		luaL_newmetatable(L, className.c_str());
+		int metatable = lua_gettop(L);
+		stackDump(L);
+		//3: metatable["__metatable"] = methodtable  
+		lua_pushliteral(L, "__metatable");
+		stackDump(L);
+		lua_pushvalue(L, methodtable);
+		stackDump(L);
+		lua_settable(L, metatable);  // hide metatable from Lua getmetatable()  
+		stackDump(L);
+		//4: metatable["__index"] = methodtable  
+		lua_pushliteral(L, "__index");
+		stackDump(L);
+		lua_pushvalue(L, methodtable);
+		stackDump(L);
+		lua_settable(L, metatable);
+		stackDump(L);
+
+		//5: metatable["__gc"] = gc_animal   
+		lua_pushliteral(L, "__gc");
+		stackDump(L);
+		lua_pushcfunction(L, gc_animal);
+		stackDump(L);
+		lua_settable(L, metatable);
+		stackDump(L);
+
+		lua_pop(L, 1);  // drop metatable  
+		stackDump(L);
+		//6: for objct:  
+		// name == 0 set object function to "methods"  
+		//eg:Animal a = Animal("xx");  
+		//a:func() in this "methods" table;  
+		luaL_openlib(L, 0, methods, 0);  // fill methodtable  
+		lua_pop(L, 1);  // drop methodtable  
+		stackDump(L);
+		//7.1: for Class:  
+		//name = "classname" , so this set Class function to "methods_f"  
+		//eg:Animal a = Animal:creat("xx");  
+		//Animal:creat() in this "methods_f" tables;  
+		//        luaL_openlib(L, className.c_str(), methods_f, 0);  
+
+		//7.2: for Class:  
+		//add global function "Classname", so we Animal() is a global function now  
+		//Animal a = Animal("xx");  
+		//function Animal()in lua will call "creat" in C++  
+		lua_register(L, className.c_str(), creat);
+
+	}
+
+};
+
+const string LuaAnimal::className = "Animal";
+const luaL_reg LuaAnimal::methods[] = {
+	{ "sound", LuaAnimal::sound },
+	{ "setAge", LuaAnimal::setAge },
+	{ "getAge", LuaAnimal::getAge },
+	{ "__gc", LuaAnimal::gc_animal },
+	{ NULL, NULL }
+};
+const luaL_reg LuaAnimal::methods_f[] = {
+	{ "creat", LuaAnimal::creat },
+	{ NULL, NULL }
+};
+
+
+void BindingClass3()
+{
+	lua_State      *L = luaL_newstate();
+	luaL_openlibs(L);
+	LuaAnimal::Register(L);
+	if (luaL_loadfile(L, "chenee.lua") || lua_pcall(L, 0, 0, 0)){
+		cout << "cannot run config. file:" << lua_tostring(L, -1) << endl;
+
+	}
+	lua_close(L);
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
 int _tmain(int argc, _TCHAR* argv[])
 {
  	runLua("sp.lua");
@@ -598,7 +746,8 @@ int _tmain(int argc, _TCHAR* argv[])
 // 	useCfunction();
 	testStack();
 	BindingClass2();
-
+	BindingClass3();
+	system("pause");
  	return 0;
 }
 
