@@ -57,9 +57,12 @@ function Set.print (s)
  print(Set.tostring(s))
 end
 mt.__add = Set.union
-
-s1 = Set.new{10, 20, 30, 50}
-s2 = Set.new{30, 1}
+mt.__tostring = Set.tostring
+mt.__metatable = "not your business"
+s1 = Set.new{10, 20, 30, 40, 50, 60}
+s2 = Set.new{11, 21, 31, 41, 51, 61}
+print (s1)
+print (s2)
 print(getmetatable(s1)) --> table: 00672B60
 print(getmetatable(s2)) --> table: 00672B60
 
@@ -84,3 +87,33 @@ print(maximum({8,10,23,12,5}))     --> 23   3
 s, e = string.find("hello Lua users", "Lua")
 print(s, e)   -->  7      9
 
+print "-----------------------"
+
+-- create the prototype with default values
+prototype = {x = 0, y = 0, width = 640, height = 480}
+mt = {} -- create a metatable
+-- declare the constructor function
+function new (o)
+setmetatable(o, mt)
+return o
+end
+mt.__index = function (_, key)
+return prototype[key]
+end
+
+w = new{x=10,y=20}
+print(w.width) --> 100
+print(w.height) --> 100
+print(w.x) --> 10
+print(w.y) --> 20
+
+
+function setDefault (t, d)
+local mt = {__index = function () return d end}
+setmetatable(t, mt)
+end
+
+tab = {x=10, y=20}
+print(tab.x, tab.z) --> 10 nil
+setDefault(tab, 0)
+print(tab.x, tab.z) --> 10 0

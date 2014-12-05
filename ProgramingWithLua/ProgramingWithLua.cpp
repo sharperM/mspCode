@@ -4,12 +4,40 @@
 #include "stdafx.h"
 #include <iostream>
 #include <string>
+#ifdef __cplusplus
 extern "C" {
+#endif
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
+#ifdef __cplusplus
 }
+#endif
 using namespace std;
+
+
+void error(lua_State *L, const char *fmt, ...) {
+	va_list argp;
+	va_start(argp, fmt);
+	vfprintf(stderr, fmt, argp);
+	va_end(argp);
+	lua_close(L);
+	exit(EXIT_FAILURE);
+}
+
+void load(lua_State *L, const char *fname, int *w, int *h) {
+	if (luaL_loadfile(L, fname) || lua_pcall(L, 0, 0, 0))
+		error(L, "cannot run config. file: %s", lua_tostring(L, -1));
+	lua_getglobal(L, "width");
+	lua_getglobal(L, "height");
+	if (!lua_isnumber(L, -2))
+		error(L, "'width' should be a number\n");
+	if (!lua_isnumber(L, -1))
+		error(L, "'height' should be a number\n");
+	*w = lua_tointeger(L, -2);
+	*h = lua_tointeger(L, -1);
+}
+
 void runLua(string filePath)
 {
 	//---------------在程序中使用  脚本---------------------
@@ -26,16 +54,20 @@ void runLua(string filePath)
 	};
 
 	//3.注册Lua标准库并清空栈
-	const luaL_Reg *lib = lualibs;
-	for (; lib->func != NULL; lib++)
-	{
-		lib->func(lua_state);
-		lua_settop(lua_state, 0);
-	}
-
+// 	const luaL_Reg *lib = lualibs;
+// 	for (; lib->func != NULL; lib++)
+// 	{
+// 		lib->func(lua_state);
+// 		lua_settop(lua_state, 0);
+// 	}
+	//注册 标准库（math,Bitwise,table,string,io,operating system,debug）
+	luaL_openlibs(lua_state);
 	//4、运行hello.lua脚本  
 	luaL_dofile(lua_state, filePath.c_str());
-
+	//读取全局变量
+	int w = 0, h = 0;
+	load(lua_state, "RECT.lua", &w, &h);
+	cout << "width = " << w << ", height = "<<h << endl;
 	//5. 关闭Lua虚拟机
 	lua_close(lua_state);
 
@@ -64,7 +96,7 @@ void useLuaFun()
 {
 	//创建Lua虚拟机
 	lua_State *lua_state = luaL_newstate();
-	//加载所有库
+	//加载 标准库（math,Bitwise,table,string,io,operating system,debug）
 	luaL_openlibs(lua_state);
 	//运行Lua脚本
 	std::string scriptPath = "add_.lua";
@@ -189,7 +221,7 @@ void useCfunction()
 {
 	//创建Lua虚拟机
 	lua_State *lua_state = luaL_newstate();
-	//加载所有库
+	//加载 标准库（math,Bitwise,table,string,io,operating system,debug）
 	luaL_openlibs(lua_state);
 	//注册自定义函数
 	lua_register(lua_state, "average", average);
@@ -214,6 +246,7 @@ void useCfunction()
 // 绑定 c++ 类
 class Foo
 {
+public:
 	string  m_name;
 public:
 	Foo(const char* name){ 
@@ -260,20 +293,38 @@ int l_Foo_destructor(lua_State* L)
 	return 0;
 }
 
+static int l_Foo_index(lua_State* L)
+{
+	Foo* pT = *(Foo**)lua_topointer(L, 1);
+
+	if (strcmp(lua_tostring(L, 2), "m_name") == 0)
+	{
+		lua_pushstring(L, pT->m_name.c_str());
+	}
+	else if (strcmp(lua_tostring(L, 2), "dosomething") == 0)
+	{
+		lua_pushcfunction(L, l_Foo_dosomething);
+	}
+	else
+	{
+		return 0;
+	}
+	return 1;
+}
+
+static int l_Foo_newindex(lua_State* L)
+{
+	Foo* pT = *(Foo**)lua_topointer(L, 1);
+
+	if (strcmp(lua_tostring(L, 2), "m_name") == 0)
+	{
+		pT->m_name = (string)lua_tostring(L, 3);
+	}
+	return 0;
+}
+
 void RegisterFoo(lua_State* L)
 {
-//  	luaL_Reg sFooRegs[] = 
-//  	{
-//  		{ "new",l_Foo_constructor },
-//  		{ "dosomething",l_Foo_dosomething },
-//  		{ "__gc", l_Foo_destructor },
-//  		{NULL,NULL}
-//  	};
-// 	luaL_newmetatable(L, "Foo");
-// 	luaL_register(L, NULL, sFooRegs);
-// 	lua_setfield(L, -1, "__index");
-// 	lua_setglobal(L, "Foo");
-
 	//1: new methods talbe for L to save functions  
     lua_newtable(L);
     int methodtable = lua_gettop(L);
@@ -323,15 +374,37 @@ void RegisterFoo(lua_State* L)
 
 }
 
+
+void RegisterFoo2(lua_State* L)
+{
+	lua_pushcfunction(L, l_Foo_constructor);    // 注册用于创建类的全局函数
+	lua_setglobal(L, "Foo");
+
+	luaL_newmetatable(L, "Foo");           // 创建一个元表
+
+	lua_pushstring(L, "__gc");               // 垃圾回收
+	lua_pushcfunction(L, l_Foo_destructor);
+	lua_settable(L, -3);                     // 公共函数调用的实现就在此啊
+
+	lua_pushstring(L, "__index");
+	lua_pushcfunction(L, l_Foo_index);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "__newindex");
+	lua_pushcfunction(L, l_Foo_newindex);
+	lua_settable(L, -3);
+
+	lua_pop(L, 1);
+}
 void BindingClass()
 {
 	//1、创建Lua虚拟机
 	lua_State *lua_state = luaL_newstate();
-	//2、加载所有库
+	//2、加载 标准库（math,Bitwise,table,string,io,operating system,debug）
 	luaL_openlibs(lua_state);
 
 	//3
-	RegisterFoo(lua_state);
+	RegisterFoo2(lua_state);
 
 	//4、运行hello.lua脚本  
 	std::string scriptPath = "class.lua";
@@ -352,12 +425,180 @@ void BindingClass()
 
 }
 
+//遍历栈 的 打印出 内容
+static void stackDump(lua_State *L) {
+	int i;
+	int top = lua_gettop(L); /* depth of the stack */
+	for (i = 1; i <= top; i++) { /* repeat for each level */
+		int t = lua_type(L, i);
+		switch (t) {
+		case LUA_TSTRING: { /* strings */
+							  printf("'%s'", lua_tostring(L, i));
+							  break;
+		}
+		case LUA_TBOOLEAN: { /* booleans */
+							   printf(lua_toboolean(L, i) ? "true" : "false");
+							   break;
+		}
+		case LUA_TNUMBER: { /* numbers */
+							  printf("%g", lua_tonumber(L, i));
+							  break;
+		}
+		default: { /* other values */
+					 printf("%s", lua_typename(L, t));
+					 break;
+		}
+		}
+		printf(" "); /* put a separator */
+	}
+	printf("\n"); /* end the listing */
+}
+
+//测试  堆栈 操作
+void testStack()
+{
+	cout << "-----------------" << endl;
+	lua_State *L = luaL_newstate();
+	lua_pushboolean(L, 1);
+	lua_pushnumber(L, 10);
+	lua_pushnil(L);
+	lua_pushstring(L, "hello");
+	stackDump(L);
+	/* true 10 nil 'hello' */
+	lua_pushvalue(L, -4); stackDump(L);//复制 指定索引值到栈顶 （负数从栈顶开始， 正数从栈底开始）
+	/* true 10 nil 'hello' true */
+	lua_replace(L, 3); stackDump(L);//用栈顶值替换指定索引值 并出栈
+	/* true 10 true 'hello' */
+	lua_settop(L, 6); stackDump(L);//设置栈的高度（深度）
+	/* true 10 true 'hello' nil nil */
+	lua_remove(L, -3); stackDump(L);//移出指定索引的值
+	/* true 10 true nil nil */
+	lua_settop(L, -5); stackDump(L);//设置栈的高度（深度） 负数表示减少
+	/* true */
+	lua_close(L);
+}
+
+
+
+
+////////////////////使用 类//////////////////////////////////////////////////////
+class CTest
+{
+public:
+	CTest()
+	{
+		m_x = 1234;
+		cout << "construct" << endl;
+	}
+	virtual ~CTest()
+	{
+		cout << "deconstruct" << endl;
+	}
+
+	int Add(int x, int y)
+	{
+		return x + y;
+	};
+	int m_x;
+};
+
+static int CreateCTest(lua_State* L)
+{
+	// 创建一个元表为CTest的Table——Lua对象
+	CTest** pData = (CTest**)lua_newuserdata(L, sizeof(CTest*));
+	*pData = new CTest();
+	luaL_getmetatable(L, "CTest");
+	lua_setmetatable(L, -2);
+	return 1;
+}
+
+static int DestoryCTest(lua_State* L)
+{
+	// 释放对象
+	delete *(CTest**)lua_topointer(L, 1);
+	return 0;
+}
+
+static int CallAdd(lua_State* L)
+{
+	// 调用C++类方法的跳板函数。
+	CTest* pT = *(CTest**)lua_topointer(L, 1);
+	lua_pushnumber(L, pT->Add(lua_tonumber(L, 2), lua_tonumber(L, 3)));
+	return 1;
+}
+
+static int lua_index(lua_State* L)
+{
+	CTest* pT = *(CTest**)lua_topointer(L, 1);
+
+	if (strcmp(lua_tostring(L, 2), "m_x") == 0)
+	{
+		lua_pushnumber(L, pT->m_x);
+	}
+	else if (strcmp(lua_tostring(L, 2), "Add") == 0)
+	{
+		lua_pushcfunction(L, CallAdd);
+	}
+	else
+	{
+		return 0;
+	}
+	return 1;
+}
+
+static int lua_newindex(lua_State* L)
+{
+	CTest* pT = *(CTest**)lua_topointer(L, 1);
+
+	if (strcmp(lua_tostring(L, 2), "m_x") == 0)
+	{
+		pT->m_x = (int)lua_tonumber(L, 3);
+	}
+	return 0;
+}
+
+
+void BindingClass2()
+{
+	lua_State *L = lua_open();
+	luaopen_base(L);
+
+	// 往lua中注册类
+	lua_pushcfunction(L, CreateCTest);    // 注册用于创建类的全局函数
+	lua_setglobal(L, "CTest");
+
+	luaL_newmetatable(L, "CTest");           // 创建一个元表
+
+	lua_pushstring(L, "__gc");               // 垃圾回收
+	lua_pushcfunction(L, DestoryCTest);
+	lua_settable(L, -3);                     // 公共函数调用的实现就在此啊
+
+	lua_pushstring(L, "__index");
+	lua_pushcfunction(L, lua_index);
+	lua_settable(L, -3);
+
+	lua_pushstring(L, "__newindex");
+	lua_pushcfunction(L, lua_newindex);
+	lua_settable(L, -3);
+
+	lua_pop(L, 1);
+
+	luaL_dofile(L, "LuaUseClass.lua");
+
+	lua_close(L);
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 int _tmain(int argc, _TCHAR* argv[])
 {
  	runLua("sp.lua");
 // 	useLuaFun();
 // 	useCfunction();
-	BindingClass();
-	return 0;
+	testStack();
+	BindingClass2();
+
+ 	return 0;
 }
 
