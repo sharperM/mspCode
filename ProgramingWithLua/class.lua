@@ -1,6 +1,7 @@
 print ("class.lua__ start")
 
-foo = l_Foo_constructor("msp")
-
+foo =Foo("msp")
+foo2 =Foo("123")
+alive()
 
 print ("class.lua__ end")

@@ -295,6 +295,8 @@ void testStack()
 }
 
 // 绑定 c++ 类（在lua 脚本操作 c++ 对象）
+string strClassName = "Foo";
+
 class Foo
 {
 public:
@@ -305,29 +307,36 @@ public:
 		{
 			m_name = name;
 		}
-		std::cout << "foo born." << std::endl; 
+		std::cout << "foo construct.name: "<< m_name << std::endl; 
 	}
-	~Foo(){ std::cout << "foo dead." << std::endl; }
+	~Foo(){ std::cout << "foo dead.name: " << m_name << std::endl; }
 	void dosomething()
 	{
-		std::cout << "foo is alive." << std::endl;
+		std::cout << "foo is alive.name: " << m_name << std::endl;
 	}
 };
 
 int l_Foo_constructor(lua_State* L)
 {
-	const char* name = luaL_checkstring(L,1);
+	string name = lua_tostring(L,1);
 
 	Foo** udata = (Foo**)lua_newuserdata(L, sizeof(Foo*));
 
-	*udata = new Foo(name);
+	*udata = new Foo(name.c_str());
 
+	luaL_getmetatable(L, strClassName.c_str());
+	lua_setmetatable(L, -2);
 	return 1;
 }
-
 Foo * l_CheackFoo(lua_State* L, int n)
 {
-	return *(Foo **)luaL_checkudata(L, n, "luaL_Foo");
+	luaL_checktype(L, n, LUA_TUSERDATA);
+	void *ud = *(Foo **)luaL_checkudata(L, n, strClassName.c_str());
+	if (!ud)
+	{
+		luaL_typerror(L, n, strClassName.c_str());
+	}
+	return (Foo*)ud;
 }
 
 int l_Foo_dosomething(lua_State* L)
@@ -340,6 +349,8 @@ int l_Foo_dosomething(lua_State* L)
 int l_Foo_destructor(lua_State* L)
 {
 	Foo * foo = l_CheackFoo(L, 1);
+	//Foo *a = (Foo*)(*(void**)lua_touserdata(L, 1));
+	//delete a;
 	delete foo;
 	return 0;
 }
@@ -374,6 +385,11 @@ static int l_Foo_newindex(lua_State* L)
 	return 0;
 }
 
+luaL_reg FooMethods[] = {
+	{"alive", l_Foo_dosomething},
+	{ "__gc", l_Foo_destructor },
+	{NULL,NULL}
+};
 void RegisterFoo(lua_State* L)
 {
 	//1: new methods talbe for L to save functions  
@@ -381,7 +397,7 @@ void RegisterFoo(lua_State* L)
     int methodtable = lua_gettop(L);
 
     //2: new metatable for L to save "__index" "__newindex" "__gc" "__metatable" ...  
-    luaL_newmetatable(L, "luaL_Foo");
+    luaL_newmetatable(L, strClassName.c_str());
     int metatable = lua_gettop(L);
 
     //3: metatable["__metatable"] = methodtable  
@@ -399,19 +415,16 @@ void RegisterFoo(lua_State* L)
 	lua_pushcfunction(L, l_Foo_destructor);
     lua_settable(L, metatable);
 
+	luaL_openlib(L, 0, FooMethods, 0);
     lua_pop(L, 1);  // drop metatable  
 
+	lua_register(L, strClassName.c_str(), l_Foo_constructor);
     //6: for objct:  
     // name == 0 set object function to "methods"  
     //eg:Animal a = Animal("xx");  
     //a:func() in this "methods" table;  
 	//luaL_openlib(L, 0, methods, 0);  // fill methodtable  
 		
-	lua_register(L, "new", l_Foo_constructor);
-	lua_register(L, "dosomething", l_Foo_dosomething);
-	lua_register(L, "__gc", l_Foo_destructor);
-	lua_pop(L, 1);  // drop methodtable  
-
     //7.1: for Class:  
     //name = "classname" , so this set Class function to "methods_f"  
     //eg:Animal a = Animal:creat("xx");  
@@ -429,9 +442,9 @@ void RegisterFoo(lua_State* L)
 void RegisterFoo2(lua_State* L)
 {
 	lua_pushcfunction(L, l_Foo_constructor);    // 注册用于创建类的全局函数
-	lua_setglobal(L, "Foo");
+	lua_setglobal(L, strClassName.c_str());
 
-	luaL_newmetatable(L, "Foo");           // 创建一个元表
+	luaL_newmetatable(L, strClassName.c_str());           // 创建一个元表
 
 	lua_pushstring(L, "__gc");               // 垃圾回收
 	lua_pushcfunction(L, l_Foo_destructor);
@@ -455,7 +468,7 @@ void BindingClass()
 	luaL_openlibs(lua_state);
 
 	//3
-	RegisterFoo2(lua_state);
+	RegisterFoo(lua_state);
 
 	//4、运行hello.lua脚本  
 	std::string scriptPath = "class.lua";
@@ -470,7 +483,6 @@ void BindingClass()
 	{
 		std::cout << " Could not load the script." << std::endl;
 	}
-
 	//5. 关闭Lua虚拟机
 	lua_close(lua_state);
 
@@ -745,6 +757,9 @@ int _tmain(int argc, _TCHAR* argv[])
 // 	useLuaFun();
 // 	useCfunction();
 	testStack();
+	cout << "--1-----" << endl;
+	BindingClass();
+	cout << "--2-----" << endl;
 	BindingClass2();
 	BindingClass3();
 	system("pause");
