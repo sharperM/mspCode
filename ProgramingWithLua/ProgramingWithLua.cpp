@@ -385,38 +385,52 @@ static int l_Foo_newindex(lua_State* L)
 	return 0;
 }
 
-luaL_reg FooMethods[] = {
-	{"alive", l_Foo_dosomething},
+const luaL_reg FooMethods[] = {
+	{ "alive", l_Foo_dosomething },
 	{ "__gc", l_Foo_destructor },
-	{NULL,NULL}
+	{ NULL, NULL }
 };
 void RegisterFoo(lua_State* L)
 {
-	//1: new methods talbe for L to save functions  
+	//1: new methods talbe for L to save functions 
+	stackDump(L);
     lua_newtable(L);
-    int methodtable = lua_gettop(L);
+	int methodtable = lua_gettop(L);
+	stackDump(L);
 
     //2: new metatable for L to save "__index" "__newindex" "__gc" "__metatable" ...  
     luaL_newmetatable(L, strClassName.c_str());
-    int metatable = lua_gettop(L);
+	int metatable = lua_gettop(L);
+	stackDump(L);
 
     //3: metatable["__metatable"] = methodtable  
     lua_pushliteral(L, "__metatable");
-    lua_pushvalue(L, methodtable);
-    lua_settable(L, metatable);  // hide metatable from Lua getmetatable()  
+	stackDump(L);
+	lua_pushvalue(L, methodtable);
+	stackDump(L);
+	lua_settable(L, metatable);  // hide metatable from Lua getmetatable()  
+	stackDump(L);
 
     //4: metatable["__index"] = methodtable  
     lua_pushliteral(L, "__index");
-    lua_pushvalue(L, methodtable);
-    lua_settable(L, metatable);
+	stackDump(L);
+	lua_pushvalue(L, methodtable);
+	stackDump(L);
+	lua_settable(L, metatable);
+	stackDump(L);
 
     //5: metatable["__gc"] = gc_animal   
     lua_pushliteral(L, "__gc");
+	stackDump(L);
 	lua_pushcfunction(L, l_Foo_destructor);
-    lua_settable(L, metatable);
-
+	stackDump(L);
+	lua_settable(L, metatable);
+	stackDump(L);
+	lua_pop(L, 1);
 	luaL_openlib(L, 0, FooMethods, 0);
-    lua_pop(L, 1);  // drop metatable  
+	stackDump(L);
+	lua_pop(L, 1);  // drop metatable  
+	stackDump(L);
 
 	lua_register(L, strClassName.c_str(), l_Foo_constructor);
     //6: for objct:  
@@ -485,7 +499,6 @@ void BindingClass()
 	}
 	//5. 关闭Lua虚拟机
 	lua_close(lua_state);
-
 }
 
 ////////////////////使用 类//////////////////////////////////////////////////////
@@ -618,7 +631,7 @@ private:
 //  
 class LuaAnimal{
 	static const string className;
-	static const luaL_reg methods[];
+	static const luaL_reg _methods[];
 	static const luaL_reg methods_f[];
 	static int creat(lua_State *L)
 	{
@@ -703,7 +716,8 @@ public:
 		// name == 0 set object function to "methods"  
 		//eg:Animal a = Animal("xx");  
 		//a:func() in this "methods" table;  
-		luaL_openlib(L, 0, methods, 0);  // fill methodtable  
+		luaL_openlib(L, 0, _methods, 0);  // fill methodtable  
+		stackDump(L);
 		lua_pop(L, 1);  // drop methodtable  
 		stackDump(L);
 		//7.1: for Class:  
@@ -723,7 +737,7 @@ public:
 };
 
 const string LuaAnimal::className = "Animal";
-const luaL_reg LuaAnimal::methods[] = {
+const luaL_reg LuaAnimal::_methods[] = {
 	{ "sound", LuaAnimal::sound },
 	{ "setAge", LuaAnimal::setAge },
 	{ "getAge", LuaAnimal::getAge },
