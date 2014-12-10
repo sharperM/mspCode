@@ -231,8 +231,23 @@ void HookMouseLLMessage()
 	}
 
 }
+
+
+void referenceTest()
+{
+	struct sd
+	{
+		int i;
+		char a[5];
+	};
+	sd a1 = { 0 };
+	sd& a2 = a1;
+	memset(&a2, 255, sizeof(a2));
+	cout << "" << endl;
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
+	referenceTest();
 	GetOpenGLVersion();
 	GetWindowsVersion2();
 	GetWindowsVersion();
