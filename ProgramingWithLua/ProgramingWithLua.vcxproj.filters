@@ -16,6 +16,9 @@
     <Filter Include="lua">
       <UniqueIdentifier>{aa6521b8-b7d2-44e9-9f36-8524f2285b7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="luabind">
+      <UniqueIdentifier>{19d8be8f-bfec-4ad3-b776-31aa69bc778a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
