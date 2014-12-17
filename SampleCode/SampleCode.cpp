@@ -9,6 +9,7 @@
 #include <vector>
 #include <fstream>
 #include <windows.h>
+#include <set>
 // #include <objidl.h>
 // #include <gdiplus.h>
 // using namespace Gdiplus;
@@ -200,6 +201,17 @@ void JsonTestCode()
 	string stroutput;
 	stroutput =
 		v3.toStyledString();
+
+
+	Json::Value vCrash;
+	if (Json::Reader().parse("                                {\"\":null}mjlkjlkjlkj;l", vCrash))
+	{
+		if (vCrash.isObject())
+		{
+			vCrash["1231"];
+		}
+	}
+
 }
 
 HHOOK hmouse;
@@ -244,6 +256,19 @@ void referenceTest()
 	sd& a2 = a1;
 	memset(&a2, 255, sizeof(a2));
 	cout << "" << endl;
+
+	set<int*> m_int;
+	int n100[100] = {0};
+	for (unsigned i = 0; i < 100; ++i)
+	{
+		m_int.insert(&(n100[i]));
+		n100[i] = i;
+	}
+	if (m_int.begin() == m_int.find(&n100[0]))
+	{
+	}
+	;
+	
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -258,7 +283,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	vector<char> s;
 	GetFileRaw(scrtextfile + "gameoption.ini", s);
 	DeleteFile("c:\\wait2delete\\","*.txt");
-	HookMouseLLMessage();
+	//HookMouseLLMessage();
 
 
 
