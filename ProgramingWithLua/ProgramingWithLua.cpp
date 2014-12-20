@@ -6,6 +6,28 @@
 
 #include <iostream>
 using namespace std;
+
+#include <iostream>
+#include "luabind/luabind.hpp"
+#pragma comment(lib,"libluabindd.lib")
+void greet()
+{
+	std::cout << "hello world!\n";
+}
+
+extern "C" int init(lua_State* L)
+{
+	using namespace luabind;
+
+	open(L);
+
+	module(L)
+		[
+			def("greet", &greet)
+		];
+
+	return 0;
+}
 //////////////////////////////////////////////////////////////////////////
 int _tmain(int argc, _TCHAR* argv[])
 {

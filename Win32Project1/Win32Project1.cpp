@@ -172,7 +172,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND testButton = ::CreateWindow(TEXT("button"), TEXT("test"), WS_VISIBLE | WS_CHILD, 0, 240, 80, 30, hWnd, (HMENU)1, hInstance, NULL);
    HWND startPreviewButton = ::CreateWindow(TEXT("button"), TEXT("start preview"), WS_VISIBLE | WS_CHILD, 90, 240, 80, 30, hWnd, (HMENU)2, hInstance, NULL);
    HWND stopPreviewButton = ::CreateWindow(TEXT("button"), TEXT("stop preview"), WS_VISIBLE | WS_CHILD, 180, 240, 80, 30, hWnd, (HMENU)3, hInstance, NULL);
-   HWND testStatic = CreateWindow(_T("STATIC"), "", WS_CHILD | WS_VISIBLE, 0, 300, 250, 250, hWnd, NULL, hInstance, NULL);
+   HWND testStatic = CreateWindow(_T("STATIC"), "", WS_CHILD | WS_VISIBLE, 0, 300, 320, 240, hWnd, NULL, hInstance, NULL);
 
    DStest ddtest;
 //    HWND hWndC = ddtest.vfwCapture(testStatic);

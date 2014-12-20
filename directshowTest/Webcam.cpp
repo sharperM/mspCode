@@ -47,7 +47,7 @@ class Webcam::Impl
 	//
 	HWND hParentsWnd;
 
-
+	const char*filename = "0";
 	std::vector<std::string> vecDeviceNames;
 public:
 	Impl(Webcam* _this)
@@ -272,8 +272,8 @@ public:
 			cy = /*statusGetHeight()*/ +cyBorder;
 			rc.bottom -= cy;
 
-			gcap.pVW->SetWindowPosition(0, 0, rc.right, rc.bottom); // be this big
-			gcap.pVW->put_Visible(OATRUE);
+			pVW->SetWindowPosition(0, 0, rc.right, rc.bottom); // be this big
+			pVW->put_Visible(OATRUE);
 
 
 			hr = pBuilder->RenderStream(
