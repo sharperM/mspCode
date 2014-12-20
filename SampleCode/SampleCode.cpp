@@ -28,12 +28,12 @@ void GetOpenGLVersion()
 	WNDCLASSEX wnd;
 	memset(&wnd, 0, sizeof(wnd));
 	wnd.cbSize = sizeof(wnd);
-	wnd.lpszClassName = "MainWClass";
+	wnd.lpszClassName = TEXT("MainWClass");
 	wnd.lpfnWndProc = DefWindowProc;
 	wnd.hInstance = GetModuleHandle(NULL);
 	int result = RegisterClassEx(&wnd);
 
-	HDC    hdc = GetDC(CreateWindow("", "",
+	HDC    hdc = GetDC(CreateWindow(TEXT(""), TEXT(""),
 		WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL | WS_MINIMIZEBOX, 0, 0, 0, 0,
 		0, 0, GetModuleHandle(NULL), 0));
 	PIXELFORMATDESCRIPTOR pfd;
@@ -177,9 +177,9 @@ void ExecuteCmdline(string &scrtextfile)
 	ofstream fs = ofstream(scrtextfile.c_str(), fstream::out | ios::binary);
 	fs << "ping www.baidu.com\r\nping www.163.com\r\n";
 	fs.close();
-	::CreateProcess(scrtextfile.c_str(), NULL,
+	::CreateProcessA(scrtextfile.c_str(), NULL,
 		NULL, NULL, true, 0,
-		NULL, NULL, &si, &pi);
+		NULL, NULL, (LPSTARTUPINFOA)&si, &pi);
 }
 
 void JsonTestCode()
@@ -235,7 +235,7 @@ LRESULT CALLBACK mouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 }
 void HookMouseLLMessage()
 {
-	hmouse = SetWindowsHookEx(WH_MOUSE_LL, (HOOKPROC)mouseProc, GetModuleHandle("KeyMonitor.dll"), 0);//挂上鼠标钩子  
+	hmouse = SetWindowsHookEx(WH_MOUSE_LL, (HOOKPROC)mouseProc, GetModuleHandle(TEXT("KeyMonitor.dll")), 0);//挂上鼠标钩子  
 	if (!hmouse)
 	{
 		DWORD error = GetLastError();
