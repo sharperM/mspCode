@@ -16,8 +16,11 @@
     <Filter Include="lua">
       <UniqueIdentifier>{aa6521b8-b7d2-44e9-9f36-8524f2285b7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="luabind">
-      <UniqueIdentifier>{19d8be8f-bfec-4ad3-b776-31aa69bc778a}</UniqueIdentifier>
+    <Filter Include="luabinding">
+      <UniqueIdentifier>{9ff32c3a-0a0e-42f2-b907-eaf201926936}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="luabinding\tolua">
+      <UniqueIdentifier>{847cd3cf-8fab-424c-82c1-572cae983fd8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -45,12 +48,36 @@
     <ClInclude Include="..\ExternalCode\lua\include\lualib.h">
       <Filter>lua</Filter>
     </ClInclude>
+    <ClInclude Include="1D_Point.h">
+      <Filter>luabinding</Filter>
+    </ClInclude>
+    <ClInclude Include="2D_Point.h">
+      <Filter>luabinding</Filter>
+    </ClInclude>
+    <ClInclude Include="UsingLua.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ProgramingWithLua.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="1D_Point.cpp">
+      <Filter>luabinding</Filter>
+    </ClCompile>
+    <ClCompile Include="2D_Point.cpp">
+      <Filter>luabinding</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua_1D_Point.cpp">
+      <Filter>luabinding\tolua</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua_2D_Point.cpp">
+      <Filter>luabinding\tolua</Filter>
+    </ClCompile>
+    <ClCompile Include="UsingLua.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

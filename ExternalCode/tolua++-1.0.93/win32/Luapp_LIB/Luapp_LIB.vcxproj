@@ -11,19 +11,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{36F861A2-F342-4563-AEBC-653D7BA7FCF2}</ProjectGuid>
+    <ProjectGuid>{EDA4F1DB-0DA2-438C-AF0C-B4EE7253BB20}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>ProgramingWithLua</RootNamespace>
+    <RootNamespace>Luapp_LIB</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -40,73 +40,70 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(SolutionDir)\ExternalCode\lua\lib\;$(SolutionDir)\ExternalCode\luabind\lib\;$(LibraryPath)</LibraryPath>
+    <SourcePath>C:\Users\Administrator\Source\Repos\mspCode\ExternalCode\tolua++-1.0.93\src\lib;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>$(SolutionDir)\ExternalCode\lua\lib\;$(SolutionDir)\ExternalCode\tolua++-1.0.93\lib\;$(LibraryPath)</LibraryPath>
+    <SourcePath>C:\Users\Administrator\Source\Repos\mspCode\ExternalCode\tolua++-1.0.93\src\lib;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\ExternalCode\lua\include\;$(SolutionDir)\ExternalCode\luabind\include\;$(SolutionDir)\ExternalCode\boost_1_34_0\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Administrator\Source\Repos\mspCode\ExternalCode\lua\include;C:\Users\Administrator\Source\Repos\mspCode\ExternalCode\tolua++-1.0.93\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>tolua++_.lib;lua5.1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib>
+      <OutputFile>$(OutDir)tolua++_$(TargetExt)</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\ExternalCode\lua\include\;$(SolutionDir)\ExternalCode\tolua++-1.0.93\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Administrator\Source\Repos\mspCode\ExternalCode\lua\include;C:\Users\Administrator\Source\Repos\mspCode\ExternalCode\tolua++-1.0.93\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>tolua++.lib;lua5.1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Lib>
+      <OutputFile>$(OutDir)tolua++$(TargetExt)</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ExternalCode\lua\include\lauxlib.h" />
-    <ClInclude Include="..\ExternalCode\lua\include\lua.h" />
-    <ClInclude Include="..\ExternalCode\lua\include\lua.hpp" />
-    <ClInclude Include="..\ExternalCode\lua\include\luaconf.h" />
-    <ClInclude Include="..\ExternalCode\lua\include\lualib.h" />
-    <ClInclude Include="1D_Point.h" />
-    <ClInclude Include="2D_Point.h" />
+    <ClInclude Include="..\..\src\lib\tolua_event.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="UsingLua.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="1D_Point.cpp" />
-    <ClCompile Include="2D_Point.cpp" />
-    <ClCompile Include="Lua_1D_Point.cpp" />
-    <ClCompile Include="Lua_2D_Point.cpp" />
-    <ClCompile Include="ProgramingWithLua.cpp" />
+    <ClCompile Include="..\..\src\lib\tolua_event.c" />
+    <ClCompile Include="..\..\src\lib\tolua_is.c" />
+    <ClCompile Include="..\..\src\lib\tolua_map.c" />
+    <ClCompile Include="..\..\src\lib\tolua_push.c" />
+    <ClCompile Include="..\..\src\lib\tolua_to.c" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="UsingLua.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\lib\SCsub" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
