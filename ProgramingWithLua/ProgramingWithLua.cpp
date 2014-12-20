@@ -9,7 +9,14 @@ using namespace std;
 
 #include <iostream>
 #include "luabind/luabind.hpp"
+
+#ifdef _DEBUG
 #pragma comment(lib,"libluabindd.lib")
+#else
+#pragma comment(lib,"libluabind.lib")
+#endif // _DEBUG
+
+
 void greet()
 {
 	std::cout << "hello world!\n";
@@ -25,7 +32,6 @@ extern "C" int init(lua_State* L)
 		[
 			def("greet", &greet)
 		];
-
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////

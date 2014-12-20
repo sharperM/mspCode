@@ -85,6 +85,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ExternalCode\luabind\include\luabind\luabind.hpp" />
     <ClInclude Include="..\ExternalCode\lua\include\lauxlib.h" />
     <ClInclude Include="..\ExternalCode\lua\include\lua.h" />
     <ClInclude Include="..\ExternalCode\lua\include\lua.hpp" />
