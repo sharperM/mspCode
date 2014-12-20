@@ -1,5 +1,5 @@
-ï»¿
-// SampleSocketClientDlg.cpp : å®ç°æ–‡ä»¶
+
+// SampleSocketClientDlg.cpp : ÊµÏÖÎÄ¼ş
 //
 
 #include "stdafx.h"
@@ -8,42 +8,20 @@
 #include "afxdialogex.h"
 #include "SocketWorker.h"
 #include <string>
-#include <xmemory>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 
-// CSampleSocketClientDlg å¯¹è¯æ¡†
+// CSampleSocketClientDlg ¶Ô»°¿ò
 
-class CSampleSocketClientDlg::Impl
-{
-public:
-	Impl(CSampleSocketClientDlg * _this);
-	~Impl();
-	CSampleSocketClientDlg * _this;
-	std::auto_ptr<SocketWorker> pSW;
-private:
 
-};
-
-CSampleSocketClientDlg::Impl::Impl(CSampleSocketClientDlg * _this)
-{
-	this->_this = _this;
-	pSW.reset(new SocketWorker);
-}
-
-CSampleSocketClientDlg::Impl::~Impl()
-{
-}
 
 CSampleSocketClientDlg::CSampleSocketClientDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CSampleSocketClientDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-	impl = new Impl(this);
-
 }
 
 void CSampleSocketClientDlg::DoDataExchange(CDataExchange* pDX)
@@ -61,35 +39,35 @@ BEGIN_MESSAGE_MAP(CSampleSocketClientDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CSampleSocketClientDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
+// CSampleSocketClientDlg ÏûÏ¢´¦Àí³ÌĞò
 
 BOOL CSampleSocketClientDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// è®¾ç½®æ­¤å¯¹è¯æ¡†çš„å›¾æ ‡ã€‚  å½“åº”ç”¨ç¨‹åºä¸»çª—å£ä¸æ˜¯å¯¹è¯æ¡†æ—¶ï¼Œæ¡†æ¶å°†è‡ªåŠ¨
-	//  æ‰§è¡Œæ­¤æ“ä½œ
-	SetIcon(m_hIcon, TRUE);			// è®¾ç½®å¤§å›¾æ ‡
-	SetIcon(m_hIcon, FALSE);		// è®¾ç½®å°å›¾æ ‡
+	// ÉèÖÃ´Ë¶Ô»°¿òµÄÍ¼±ê¡£  µ±Ó¦ÓÃ³ÌĞòÖ÷´°¿Ú²»ÊÇ¶Ô»°¿òÊ±£¬¿ò¼Ü½«×Ô¶¯
+	//  Ö´ĞĞ´Ë²Ù×÷
+	SetIcon(m_hIcon, TRUE);			// ÉèÖÃ´óÍ¼±ê
+	SetIcon(m_hIcon, FALSE);		// ÉèÖÃĞ¡Í¼±ê
 
-	// TODO:  åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–ä»£ç 
+	// TODO:  ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯´úÂë
 
-	return TRUE;  // é™¤éå°†ç„¦ç‚¹è®¾ç½®åˆ°æ§ä»¶ï¼Œå¦åˆ™è¿”å› TRUE
+	return TRUE;  // ³ı·Ç½«½¹µãÉèÖÃµ½¿Ø¼ş£¬·ñÔò·µ»Ø TRUE
 }
 
-// å¦‚æœå‘å¯¹è¯æ¡†æ·»åŠ æœ€å°åŒ–æŒ‰é’®ï¼Œåˆ™éœ€è¦ä¸‹é¢çš„ä»£ç 
-//  æ¥ç»˜åˆ¶è¯¥å›¾æ ‡ã€‚  å¯¹äºä½¿ç”¨æ–‡æ¡£/è§†å›¾æ¨¡å‹çš„ MFC åº”ç”¨ç¨‹åºï¼Œ
-//  è¿™å°†ç”±æ¡†æ¶è‡ªåŠ¨å®Œæˆã€‚
+// Èç¹ûÏò¶Ô»°¿òÌí¼Ó×îĞ¡»¯°´Å¥£¬ÔòĞèÒªÏÂÃæµÄ´úÂë
+//  À´»æÖÆ¸ÃÍ¼±ê¡£  ¶ÔÓÚÊ¹ÓÃÎÄµµ/ÊÓÍ¼Ä£ĞÍµÄ MFC Ó¦ÓÃ³ÌĞò£¬
+//  Õâ½«ÓÉ¿ò¼Ü×Ô¶¯Íê³É¡£
 
 void CSampleSocketClientDlg::OnPaint()
 {
 	if (IsIconic())
 	{
-		CPaintDC dc(this); // ç”¨äºç»˜åˆ¶çš„è®¾å¤‡ä¸Šä¸‹æ–‡
+		CPaintDC dc(this); // ÓÃÓÚ»æÖÆµÄÉè±¸ÉÏÏÂÎÄ
 
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
-		// ä½¿å›¾æ ‡åœ¨å·¥ä½œåŒºçŸ©å½¢ä¸­å±…ä¸­
+		// Ê¹Í¼±êÔÚ¹¤×÷Çø¾ØĞÎÖĞ¾ÓÖĞ
 		int cxIcon = GetSystemMetrics(SM_CXICON);
 		int cyIcon = GetSystemMetrics(SM_CYICON);
 		CRect rect;
@@ -97,7 +75,7 @@ void CSampleSocketClientDlg::OnPaint()
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
-		// ç»˜åˆ¶å›¾æ ‡
+		// »æÖÆÍ¼±ê
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
@@ -106,8 +84,8 @@ void CSampleSocketClientDlg::OnPaint()
 	}
 }
 
-//å½“ç”¨æˆ·æ‹–åŠ¨æœ€å°åŒ–çª—å£æ—¶ç³»ç»Ÿè°ƒç”¨æ­¤å‡½æ•°å–å¾—å…‰æ ‡
-//æ˜¾ç¤ºã€‚
+//µ±ÓÃ»§ÍÏ¶¯×îĞ¡»¯´°¿ÚÊ±ÏµÍ³µ÷ÓÃ´Ëº¯ÊıÈ¡µÃ¹â±ê
+//ÏÔÊ¾¡£
 HCURSOR CSampleSocketClientDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
@@ -117,43 +95,33 @@ HCURSOR CSampleSocketClientDlg::OnQueryDragIcon()
 
 void CSampleSocketClientDlg::OnBnClickedSendMsg()
 {
-	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
+	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
 	CString m_value;
 	HWND hEditbox = ::GetDlgItem(m_hWnd, IDC_EDIT1);
-	SetDlgItemText(IDC_STATIC, _T("ğ©¤€"));
 	GetDlgItemText(IDC_EDIT1, m_value);
 	if (m_value.GetLength()>0)
 	{
 		USES_CONVERSION;
 		CHAR* pAnsiString = W2A(m_value.GetString());
-		impl->pSW->sendMsg(pAnsiString/*"hello socket"*/,strlen(pAnsiString)+1);
+		SocketWorker::instance().sendMsg(pAnsiString/*"hello socket"*/);
 	}
 }
 
 
 void CSampleSocketClientDlg::OnBnClickedConnect()
 {
-	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
-	impl->pSW->connectServer();
+	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	SocketWorker::instance().connectServer();
 }
 
 
 void CSampleSocketClientDlg::OnBnClickedCloseSocket()
 {
-	// TODO:  åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
-	impl->pSW->closeSocket();
+	// TODO:  ÔÚ´ËÌí¼Ó¿Ø¼şÍ¨Öª´¦Àí³ÌĞò´úÂë
+	SocketWorker::instance().closeSocket();
 }
 
 void CSampleSocketClientDlg::OnBnClickedOk()
 {
 	OnBnClickedSendMsg();
-}
-
-CSampleSocketClientDlg::~CSampleSocketClientDlg()
-{
-	if (impl)
-	{
-		delete impl;
-	}
-	
 }

@@ -402,7 +402,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case FD_WRITE:
 
 				SocketInfo = GetSocketInformation(wParam);
-
+				if (SocketInfo == NULL)
+				{
+					break;
+				}
 				if (SocketInfo->BytesRECV > SocketInfo->BytesSEND)
 
 				{

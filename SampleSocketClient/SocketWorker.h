@@ -5,23 +5,12 @@ private:
 	friend class Impl;
 	class Impl;
 	Impl *impl;
-	
-public:
 	SocketWorker();
+public:
 	static SocketWorker& instance();
 	~SocketWorker();
 	void connectServer();
-	void sendMsg(const char*strMsg, size_t len);
+	void sendMsg(const char *strMsg);
 	void closeSocket();
-
-	void onConnect(WPARAM wParam, LPARAM lParam);
-
-	void onRead(WPARAM wParam, LPARAM lParam);
-
-	void onWrite(WPARAM wParam, LPARAM lParam);
-	
-	void onClose(WPARAM wParam, LPARAM lParam);
-
-	LRESULT wmProc(UINT uMsg, LPARAM lParam, WPARAM wParam);
 };
 
