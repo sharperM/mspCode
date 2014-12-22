@@ -42,10 +42,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(SolutionDir)\ExternalCode\lua\lib\;$(SolutionDir)\ExternalCode\luabind\lib\;$(SolutionDir)ExternalCode\tolua++-1.0.93\lib\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\ExternalCode\boost_1_34_0\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>$(SolutionDir)\ExternalCode\lua\lib\;$(SolutionDir)\ExternalCode\luabind\lib\;$(SolutionDir)ExternalCode\tolua++-1.0.93\lib\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\ExternalCode\boost_1_34_0\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
