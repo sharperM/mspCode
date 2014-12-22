@@ -54,9 +54,6 @@
     <ClInclude Include="..\Win32Project1\json\json\writer.h">
       <Filter>json</Filter>
     </ClInclude>
-    <ClInclude Include="Gdiplus_.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -85,8 +82,5 @@
     <None Include="..\Win32Project1\json\json_valueiterator.inl">
       <Filter>json</Filter>
     </None>
-    <ClCompile Include="Gdiplus_.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

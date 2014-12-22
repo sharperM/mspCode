@@ -22,6 +22,9 @@
     <Filter Include="luabinding\tolua">
       <UniqueIdentifier>{847cd3cf-8fab-424c-82c1-572cae983fd8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="luabinding\luabind">
+      <UniqueIdentifier>{5dc86b06-1f32-4511-948c-66ea48fa0ca2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -56,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="UsingLua.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ExternalCode\luabind\include\luabind\luabind.hpp">
+      <Filter>luabinding\luabind</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

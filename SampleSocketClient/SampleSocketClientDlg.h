@@ -10,7 +10,7 @@ class CSampleSocketClientDlg : public CDialogEx
 // 构造
 public:
 	CSampleSocketClientDlg(CWnd* pParent = NULL);	// 标准构造函数
-	~CSampleSocketClientDlg();	
+	~CSampleSocketClientDlg(){};
 
 // 对话框数据
 	enum { IDD = IDD_SAMPLESOCKETCLIENT_DIALOG };

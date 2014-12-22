@@ -41,11 +41,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(SolutionDir)\ExternalCode\lua\lib\;$(SolutionDir)\ExternalCode\tolua++-1.0.93\lib\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\ExternalCode\lua\lib\;$(SolutionDir)\ExternalCode\luabind\lib\;$(SolutionDir)ExternalCode\tolua++-1.0.93\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>$(SolutionDir)\ExternalCode\lua\lib\;$(SolutionDir)\ExternalCode\tolua++-1.0.93\lib\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\ExternalCode\lua\lib\;$(SolutionDir)\ExternalCode\luabind\lib\;$(SolutionDir)ExternalCode\tolua++-1.0.93\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,7 +54,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\ExternalCode\lua\include\;$(SolutionDir)\ExternalCode\tolua++-1.0.93\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\ExternalCode\lua\include\;$(SolutionDir)\ExternalCode\luabind\include\;$(SolutionDir)\ExternalCode\tolua++-1.0.93\include;$(SolutionDir)\ExternalCode\boost_1_34_0\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -71,7 +71,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\ExternalCode\lua\include\;$(SolutionDir)\ExternalCode\tolua++-1.0.93\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\ExternalCode\lua\include\;$(SolutionDir)\ExternalCode\luabind\include\;$(SolutionDir)\ExternalCode\tolua++-1.0.93\include;$(SolutionDir)\ExternalCode\boost_1_34_0\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -85,6 +85,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ExternalCode\luabind\include\luabind\luabind.hpp" />
     <ClInclude Include="..\ExternalCode\lua\include\lauxlib.h" />
     <ClInclude Include="..\ExternalCode\lua\include\lua.h" />
     <ClInclude Include="..\ExternalCode\lua\include\lua.hpp" />
