@@ -270,8 +270,22 @@ void referenceTest()
 	;
 	
 }
+
+void tryCrash()
+{
+	const char* text[3] = { 0 };
+	text[0] = "好高兴";
+	text[1] = "好高兴_1";
+	text[2] = "好高兴_2";
+
+	const char* t = text[-1231];
+
+
+	system("pause");
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
+	tryCrash();
 	referenceTest();
 	GetOpenGLVersion();
 	GetWindowsVersion2();
