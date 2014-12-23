@@ -267,8 +267,6 @@ void referenceTest()
 	if (m_int.begin() == m_int.find(&n100[0]))
 	{
 	}
-	;
-	
 }
 
 void tryCrash()
@@ -283,8 +281,38 @@ void tryCrash()
 
 	system("pause");
 }
+
+
+void testEraseVector()
+{
+	vector<int> v;
+	v.assign(10, 0);
+	for (unsigned i = 0; i < 10; ++i)
+	{
+		v[i] = i+1000;
+	}
+	for (vector<int>::iterator it = v.begin(); it != v.end();)
+	{
+		if (*it == 1000 || *it == 1005)
+		{
+			it = v.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+	cout << v.size() << endl;
+	for each (auto i in v)
+	{
+		cout << i << endl;
+
+	}
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	testEraseVector();
 	tryCrash();
 	referenceTest();
 	GetOpenGLVersion();
@@ -298,8 +326,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	GetFileRaw(scrtextfile + "gameoption.ini", s);
 	DeleteFile("c:\\wait2delete\\","*.txt");
 	//HookMouseLLMessage();
-
-
 
 	MSG msg;
 	BOOL bRet;
