@@ -1,0 +1,5 @@
+"src\open.cpp" -Fo"bin\msvc-10.0\debug\threading-multi\src\open.obj"    -TP /Z7 /Od /Ob0 /W3 /GR /MDd /Zc:forScope /Zc:wchar_t /wd4675 /EHs /wd4251 -c 
+-DLUABIND_DYNAMIC_LINK 
+"-I." 
+"-IC:\Program Files\Lua\5.1\include" 
+"-ID:\boost_1_46_1\boost_1_46_1"
