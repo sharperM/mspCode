@@ -10,10 +10,6 @@
 #include <fstream>
 #include <windows.h>
 #include <set>
-// #include <objidl.h>
-// #include <gdiplus.h>
-// using namespace Gdiplus;
-// #pragma comment (lib,"Gdiplus.lib")
 #include <GL/gl.h>
 #include <GL/GLU.h>
 #pragma comment (lib,"opengl32.lib")
@@ -275,13 +271,74 @@ void tryCrash()
 	text[0] = "好高兴";
 	text[1] = "好高兴_1";
 	text[2] = "好高兴_2";
-
 	const char* t = text[-1231];
-
-
 	system("pause");
 }
 
+using namespace Gdiplus;
+
+HRESULT SaveImage(BITMAPINFO *pbi, void *pBits, LPCTSTR pszFileName, LONG lQuality)
+{
+	ASSERT(pbi != NULL && pBits != NULL);
+	ASSERT(pszFileName != NULL);
+	if (pbi == NULL || pBits == NULL || pszFileName == NULL)
+		return E_FAIL;
+
+	GUID guidImageFormat = Gdiplus::ImageFormatJPEG;
+
+	Gdiplus::EncoderParameters eps;
+	eps.Count = 1;
+	eps.Parameter[0].Guid = Gdiplus::EncoderQuality;
+	eps.Parameter[0].NumberOfValues = 1;
+	eps.Parameter[0].Type = Gdiplus::EncoderParameterValueTypeLong;
+	eps.Parameter[0].Value = &lQuality;
+
+	UINT nEncoders;
+	UINT nBytes;
+	Gdiplus::Status status;
+
+	status = Gdiplus::GetImageEncodersSize(&nEncoders, &nBytes);
+	if (status != Gdiplus::Ok)
+	{
+		return (E_FAIL);
+	}
+
+	USES_CONVERSION_EX;
+	Gdiplus::ImageCodecInfo* pEncoders = static_cast<Gdiplus::ImageCodecInfo*>(_ATL_SAFE_ALLOCA(nBytes, _ATL_SAFE_ALLOCA_DEF_THRESHOLD));
+
+	status = Gdiplus::GetImageEncoders(nEncoders, nBytes, pEncoders);
+	if (status != Gdiplus::Ok)
+	{
+		return(E_FAIL);
+	}
+
+	CLSID clsidEncoder = CLSID_NULL;
+	// Determine clsid from file type
+	for (UINT iCodec = 0; iCodec < nEncoders; iCodec++)
+	{
+		if (pEncoders[iCodec].FormatID == guidImageFormat)
+		{
+			clsidEncoder = pEncoders[iCodec].Clsid;
+			break;
+		}
+	}
+
+	if (clsidEncoder == CLSID_NULL)
+	{
+		return(E_FAIL);
+	}
+
+	LPCWSTR pwszFileName = T2CW_EX(pszFileName, _ATL_SAFE_ALLOCA_DEF_THRESHOLD);
+
+	Gdiplus::Bitmap bm(pbi, pBits);
+	status = bm.Save(pwszFileName, &clsidEncoder, &eps);
+	if (status != Gdiplus::Ok)
+	{
+		return(E_FAIL);
+	}
+
+	return S_OK;
+}
 
 void testEraseVector()
 {
@@ -312,6 +369,8 @@ void testEraseVector()
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	GDIplusLib::instance();
+	Gdiplus::Image a(L"");
 	testEraseVector();
 	tryCrash();
 	referenceTest();

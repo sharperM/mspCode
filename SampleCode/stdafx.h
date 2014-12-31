@@ -10,6 +10,17 @@
 #include <stdio.h>
 #include <tchar.h>
 
+#include <objidl.h>
+#include <gdiplus.h>
+#pragma comment (lib,"Gdiplus.lib")
 
-
+class GDIplusLib
+{
+	GdiplusStartupInput gdiplusStartupInput;
+	ULONG_PTR           gdiplusToken;
+	GDIplusLib();
+public:
+	~GDIplusLib();
+	static GDIplusLib& instance();
+};
 // TODO:  在此处引用程序需要的其他头文件
