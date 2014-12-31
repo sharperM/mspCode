@@ -9,7 +9,7 @@ using namespace std;
 
 #include <iostream>
 #include "luabind/luabind.hpp"
-
+#include <cmath>
 #ifdef _DEBUG
 #pragma comment(lib,"libluabindd.lib")
 #else
@@ -38,8 +38,12 @@ extern "C" int init(lua_State* L)
 
 class Scene
 {
+	string name;
 public:
 	Scene()
+	{}	
+	Scene(const string& name)
+		:name(name)
 	{}
 
 	void createObject(int obj);
@@ -61,7 +65,15 @@ void Scene::printObjects()
 	for (auto iter = mObjects.begin(); iter != mObjects.end(); ++iter)
 		std::cout << (*iter) << std::endl;
 }
+class testclass
+{
+public:
+	testclass(const std::string& s) : m_string(s) {}
+	void print_string() { std::cout << m_string << "\n"; }
 
+private:
+	std::string m_string;
+};
 void Scene::loadMap(std::string fileName)
 {
 	try
@@ -80,15 +92,21 @@ void Scene::loadMap(std::string fileName)
 				// 我让它们名称都一样了  
 				class_<Scene>("Scene")
 				.def(luabind::constructor<>())
+				.def(luabind::constructor<const std::string&>())
 				.def("createObject", &Scene::createObject)
 				.def("printObject", &Scene::printObjects)
+				,def("sin", &sin)
+				,class_<testclass>("testclass")
+				.def(constructor<const std::string&>())
+				.def("print_string", &testclass::print_string)
 				// 注意到我并没有导出loadMap()方法  
 			];
 		// 加载lua文件  
 		luaL_dofile(L, fileName.c_str());
+// 		luabind::call_function<void>(L, "createScene", this);
+// 		luabind::call_function<void>(L, "tepp",this);
 		// 调用lua文件中的createScene方法  
-		luabind::call_function<void>(L, "createScene", this);
-	}
+}
 	catch (luabind::error& e)
 	{
 		std::cout << e.what() << std::endl;
