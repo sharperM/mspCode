@@ -36,6 +36,15 @@ extern "C" int init(lua_State* L)
 }
 //////////////////////////////////////////////////////////////////////////
 
+class PP
+{
+public:
+	int x;
+	int y;
+	int z;
+	string str;
+};
+
 class Scene
 {
 	string name;
@@ -51,6 +60,9 @@ public:
 	void printObjects();
 
 	void loadMap(std::string fileName);
+
+	//void testFunc(PP x);
+	int testFunc(PP x);
 
 private:
 	std::vector<int> mObjects;
@@ -95,6 +107,12 @@ void Scene::loadMap(std::string fileName)
 				.def(luabind::constructor<const std::string&>())
 				.def("createObject", &Scene::createObject)
 				.def("printObject", &Scene::printObjects)
+				.def("testFunc",&Scene::testFunc)
+				, class_<PP>("PP")
+				.def("x", &PP::x)
+				.def("y", &PP::y)
+				.def("z", &PP::z)
+				.def("str", &PP::str)
 				,def("sin", &sin)
 				,class_<testclass>("testclass")
 				.def(constructor<const std::string&>())
@@ -111,6 +129,16 @@ void Scene::loadMap(std::string fileName)
 	{
 		std::cout << e.what() << std::endl;
 	}
+}
+
+// void Scene::testFunc(PP x)
+// {
+// 	x.x;
+// }
+
+int Scene::testFunc(PP x)
+{
+	return x.x;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
