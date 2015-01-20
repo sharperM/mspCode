@@ -277,68 +277,68 @@ void tryCrash()
 
 using namespace Gdiplus;
 
-HRESULT SaveImage(BITMAPINFO *pbi, void *pBits, LPCTSTR pszFileName, LONG lQuality)
-{
-	ASSERT(pbi != NULL && pBits != NULL);
-	ASSERT(pszFileName != NULL);
-	if (pbi == NULL || pBits == NULL || pszFileName == NULL)
-		return E_FAIL;
-
-	GUID guidImageFormat = Gdiplus::ImageFormatJPEG;
-
-	Gdiplus::EncoderParameters eps;
-	eps.Count = 1;
-	eps.Parameter[0].Guid = Gdiplus::EncoderQuality;
-	eps.Parameter[0].NumberOfValues = 1;
-	eps.Parameter[0].Type = Gdiplus::EncoderParameterValueTypeLong;
-	eps.Parameter[0].Value = &lQuality;
-
-	UINT nEncoders;
-	UINT nBytes;
-	Gdiplus::Status status;
-
-	status = Gdiplus::GetImageEncodersSize(&nEncoders, &nBytes);
-	if (status != Gdiplus::Ok)
-	{
-		return (E_FAIL);
-	}
-
-	USES_CONVERSION_EX;
-	Gdiplus::ImageCodecInfo* pEncoders = static_cast<Gdiplus::ImageCodecInfo*>(_ATL_SAFE_ALLOCA(nBytes, _ATL_SAFE_ALLOCA_DEF_THRESHOLD));
-
-	status = Gdiplus::GetImageEncoders(nEncoders, nBytes, pEncoders);
-	if (status != Gdiplus::Ok)
-	{
-		return(E_FAIL);
-	}
-
-	CLSID clsidEncoder = CLSID_NULL;
-	// Determine clsid from file type
-	for (UINT iCodec = 0; iCodec < nEncoders; iCodec++)
-	{
-		if (pEncoders[iCodec].FormatID == guidImageFormat)
-		{
-			clsidEncoder = pEncoders[iCodec].Clsid;
-			break;
-		}
-	}
-
-	if (clsidEncoder == CLSID_NULL)
-	{
-		return(E_FAIL);
-	}
-
-	LPCWSTR pwszFileName = T2CW_EX(pszFileName, _ATL_SAFE_ALLOCA_DEF_THRESHOLD);
-
-	Gdiplus::Bitmap bm(pbi, pBits);
-	status = bm.Save(pwszFileName, &clsidEncoder, &eps);
-	if (status != Gdiplus::Ok)
-	{
-		return(E_FAIL);
-	}
-
-	return S_OK;
-}
+// HRESULT SaveImage(BITMAPINFO *pbi, void *pBits, LPCTSTR pszFileName, LONG lQuality)
+// {
+// 	assert(pbi != NULL && pBits != NULL);
+// 	assert(pszFileName != NULL);
+// 	if (pbi == NULL || pBits == NULL || pszFileName == NULL)
+// 		return E_FAIL;
+// 
+// 	GUID guidImageFormat = Gdiplus::ImageFormatJPEG;
+// 
+// 	Gdiplus::EncoderParameters eps;
+// 	eps.Count = 1;
+// 	eps.Parameter[0].Guid = Gdiplus::EncoderQuality;
+// 	eps.Parameter[0].NumberOfValues = 1;
+// 	eps.Parameter[0].Type = Gdiplus::EncoderParameterValueTypeLong;
+// 	eps.Parameter[0].Value = &lQuality;
+// 
+// 	UINT nEncoders;
+// 	UINT nBytes;
+// 	Gdiplus::Status status;
+// 
+// 	status = Gdiplus::GetImageEncodersSize(&nEncoders, &nBytes);
+// 	if (status != Gdiplus::Ok)
+// 	{
+// 		return (E_FAIL);
+// 	}
+// 
+// 	USES_CONVERSION_EX;
+// 	Gdiplus::ImageCodecInfo* pEncoders = static_cast<Gdiplus::ImageCodecInfo*>(_ATL_SAFE_ALLOCA(nBytes, _ATL_SAFE_ALLOCA_DEF_THRESHOLD));
+// 
+// 	status = Gdiplus::GetImageEncoders(nEncoders, nBytes, pEncoders);
+// 	if (status != Gdiplus::Ok)
+// 	{
+// 		return(E_FAIL);
+// 	}
+// 
+// 	CLSID clsidEncoder = CLSID_NULL;
+// 	// Determine clsid from file type
+// 	for (UINT iCodec = 0; iCodec < nEncoders; iCodec++)
+// 	{
+// 		if (pEncoders[iCodec].FormatID == guidImageFormat)
+// 		{
+// 			clsidEncoder = pEncoders[iCodec].Clsid;
+// 			break;
+// 		}
+// 	}
+// 
+// 	if (clsidEncoder == CLSID_NULL)
+// 	{
+// 		return(E_FAIL);
+// 	}
+// 
+// 	LPCWSTR pwszFileName = T2CW_EX(pszFileName, _ATL_SAFE_ALLOCA_DEF_THRESHOLD);
+// 
+// 	Gdiplus::Bitmap bm(pbi, pBits);
+// 	status = bm.Save(pwszFileName, &clsidEncoder, &eps);
+// 	if (status != Gdiplus::Ok)
+// 	{
+// 		return(E_FAIL);
+// 	}
+// 
+// 	return S_OK;
+// }
 
 void testEraseVector()
 {
@@ -363,12 +363,70 @@ void testEraseVector()
 	for each (auto i in v)
 	{
 		cout << i << endl;
-
 	}
 }
+#include "_md5/md5.h"
+
+void PrintMD5(const string& str, MD5& md5) {
+	cout << "MD5(\"" << str << "\") = " << md5.toString() << endl;
+}
+
+string FileDigest(const string& file) {
+
+	ifstream in(file.c_str(), ios::binary);
+	if (!in) {
+		return "";
+	}
+
+	MD5 md5;
+	std::streamsize length;
+	char buffer[1024];
+	while (!in.eof()) {
+		in.read(buffer, 1024);
+		length = in.gcount();
+		if (length > 0) {
+			md5.update(buffer, length);
+		}
+	}
+	in.close();
+	return md5.toString();
+}
+
+void testMD5()
+{
+	{
+		MD5 md5;
+		md5.update(ifstream("D:\\Program Files\\lk78\\userface\\41364145.jpg", ios::binary));
+		//md5.update(buffer, size);
+		PrintMD5("", md5);
+	}
+
+
+	MD5 md5;
+	md5.update("");
+	PrintMD5("", md5);
+
+	md5.update("a");
+	PrintMD5("a", md5);
+
+	md5.update("bc");
+	PrintMD5("abc", md5);
+
+	md5.update("defghijklmnopqrstuvwxyz");
+	PrintMD5("abcdefghijklmnopqrstuvwxyz", md5);
+
+	md5.reset();
+	md5.update("message digest");
+	PrintMD5("message digest", md5);
+}
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+	testMD5();
+
+
 	GDIplusLib::instance();
 	Gdiplus::Image a(L"");
 	testEraseVector();
@@ -384,7 +442,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	vector<char> s;
 	GetFileRaw(scrtextfile + "gameoption.ini", s);
 	DeleteFile("c:\\wait2delete\\","*.txt");
-	//HookMouseLLMessage();
+	HookMouseLLMessage();
 
 	MSG msg;
 	BOOL bRet;

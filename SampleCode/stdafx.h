@@ -9,18 +9,7 @@
 
 #include <stdio.h>
 #include <tchar.h>
-
-#include <objidl.h>
-#include <gdiplus.h>
-#pragma comment (lib,"Gdiplus.lib")
-
-class GDIplusLib
-{
-	GdiplusStartupInput gdiplusStartupInput;
-	ULONG_PTR           gdiplusToken;
-	GDIplusLib();
-public:
-	~GDIplusLib();
-	static GDIplusLib& instance();
-};
+#include "misc.h"
+#include <assert.h>
+#define  _CRT_SECURE_NO_WARNINGS
 // TODO:  在此处引用程序需要的其他头文件
