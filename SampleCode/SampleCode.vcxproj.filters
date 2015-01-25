@@ -16,6 +16,9 @@
     <Filter Include="json">
       <UniqueIdentifier>{50a31ea4-077b-40bd-8f47-de4c76b8441e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="md5">
+      <UniqueIdentifier>{ef6297bf-a670-49bd-a7a0-93b977616b6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -54,6 +57,12 @@
     <ClInclude Include="..\Win32Project1\json\json\writer.h">
       <Filter>json</Filter>
     </ClInclude>
+    <ClInclude Include="misc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_md5\md5.h">
+      <Filter>md5</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -70,6 +79,12 @@
     </ClCompile>
     <ClCompile Include="..\Win32Project1\json\json_writer.cpp">
       <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="misc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="_md5\md5.cpp">
+      <Filter>md5</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

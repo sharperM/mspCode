@@ -89,7 +89,6 @@ void Scene::createObject(int obj)
 {
 	mObjects.push_back(obj);
 }
-
 void Scene::printObjects()
 {
 	for (auto iter = mObjects.begin(); iter != mObjects.end(); ++iter)
@@ -132,6 +131,12 @@ void Scene::loadMap(std::string fileName)
 				.def_readwrite("y", &PP::y)
 				.def_readwrite("z", &PP::z)
 				.def_readwrite("str", &PP::str)
+				,def("sin", &sin)
+				.def(luabind::constructor<>())
+				.def_readwrite("x", &PP::x)
+				.def_readwrite("y", &PP::y)
+				.def_readwrite("z", &PP::z)
+				.def_readwrite("str", &PP::str)
 				.def_readwrite("strone", &PP::strone)
 				.def_readwrite("strtwo", &PP::strtwo)
 				.def_readwrite("strthree", &PP::strthree)
@@ -149,9 +154,10 @@ void Scene::loadMap(std::string fileName)
 			];
 		// 加载lua文件  
 		luaL_dofile(L, fileName.c_str());
+
+		// 调用lua文件中的createScene方法  
 // 		luabind::call_function<void>(L, "createScene", this);
 // 		luabind::call_function<void>(L, "tepp",this);
-		// 调用lua文件中的createScene方法  
 }
 	catch (luabind::error& e)
 	{
@@ -159,10 +165,7 @@ void Scene::loadMap(std::string fileName)
 	}
 }
 
-// void Scene::testFunc(PP x)
-// {
-// 	x.x;
-// }
+
 
 int Scene::testFunc(PP x)
 {
