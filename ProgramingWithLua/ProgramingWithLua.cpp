@@ -39,10 +39,28 @@ extern "C" int init(lua_State* L)
 class PP
 {
 public:
+	string str;
 	int x;
 	int y;
 	int z;
-	string str;
+	string strone;
+	string strtwo;
+	string strthree;
+	string strfour;
+	string strfive;
+	string strsix;
+	string strseven;
+	string streight;
+	string strnine;
+	int weight;
+	int hight;
+	int dsx;
+	int dsy;
+	int dsw;
+	int dsh;
+	int r;
+	int ang;
+
 };
 
 class Scene
@@ -109,11 +127,21 @@ void Scene::loadMap(std::string fileName)
 				.def("printObject", &Scene::printObjects)
 				.def("testFunc",&Scene::testFunc)
 				, class_<PP>("PP")
-				.def("x", &PP::x)
-				.def("y", &PP::y)
-				.def("z", &PP::z)
-				.def("str", &PP::str)
-				,def("sin", &sin)
+				.def(luabind::constructor<>())
+				.def_readwrite("x", &PP::x)
+				.def_readwrite("y", &PP::y)
+				.def_readwrite("z", &PP::z)
+				.def_readwrite("str", &PP::str)
+				.def_readwrite("strone", &PP::strone)
+				.def_readwrite("strtwo", &PP::strtwo)
+				.def_readwrite("strthree", &PP::strthree)
+				.def_readwrite("strfour", &PP::strfour)
+				.def_readwrite("strfive", &PP::strfive)
+				.def_readwrite("strsix", &PP::strsix)
+				.def_readwrite("strseven", &PP::strseven)
+				.def_readwrite("streight", &PP::streight)
+				.def_readwrite("strnine", &PP::strnine)
+				, def("sin", &sin)
 				,class_<testclass>("testclass")
 				.def(constructor<const std::string&>())
 				.def("print_string", &testclass::print_string)
@@ -138,6 +166,19 @@ void Scene::loadMap(std::string fileName)
 
 int Scene::testFunc(PP x)
 {
+	cout << x.x << endl;
+	cout << x.y << endl;
+	cout << x.z << endl;
+	cout << x.str << endl;
+	cout << x.strone << endl;
+	cout << x.strtwo << endl;
+	cout << x.strthree << endl;
+	cout << x.strfour << endl;
+	cout << x.strfive << endl;
+	cout << x.strsix << endl;
+	cout << x.strseven << endl;
+	cout << x.streight << endl;
+	cout << x.strnine << endl;
 	return x.x;
 }
 
