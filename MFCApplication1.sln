@@ -39,6 +39,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commandlineExcel2picture", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProgramingWithLua", "ProgramingWithLua\ProgramingWithLua.vcxproj", "{36F861A2-F342-4563-AEBC-653D7BA7FCF2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WininetSample", "WininetSample\WininetSample.vcxproj", "{3F693519-979A-41F0-80DB-93FC12DEC816}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -117,6 +119,10 @@ Global
 		{36F861A2-F342-4563-AEBC-653D7BA7FCF2}.Debug|Win32.Build.0 = Debug|Win32
 		{36F861A2-F342-4563-AEBC-653D7BA7FCF2}.Release|Win32.ActiveCfg = Release|Win32
 		{36F861A2-F342-4563-AEBC-653D7BA7FCF2}.Release|Win32.Build.0 = Release|Win32
+		{3F693519-979A-41F0-80DB-93FC12DEC816}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3F693519-979A-41F0-80DB-93FC12DEC816}.Debug|Win32.Build.0 = Debug|Win32
+		{3F693519-979A-41F0-80DB-93FC12DEC816}.Release|Win32.ActiveCfg = Release|Win32
+		{3F693519-979A-41F0-80DB-93FC12DEC816}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
