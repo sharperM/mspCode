@@ -63,6 +63,9 @@
     <ClInclude Include="_md5\md5.h">
       <Filter>md5</Filter>
     </ClInclude>
+    <ClInclude Include="gbk2utf8map.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

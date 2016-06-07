@@ -420,10 +420,216 @@ void testMD5()
 	PrintMD5("message digest", md5);
 }
 
+//for (unsigned char left = 0x81; left < 0x82; left++)
+//{
+//	for (unsigned char right = 0x40; right < 0xff; right++)
+//	{
+//		char s[] = { (char)left, (char)right, (char)0x00 };  //GB18030
 
+//		if (right != 0x7f)
+//		{
+//			vector<utf8_char> v = Utf16LEToUtf8(&(GB18030ToUtf16LE((uint8_t *)s))[0]);
+
+//			char * x = (char *)&v[0];
+//			int l = v.size();
+
+//			ss = COMBINE_WSTR(ss << L" ma  0x" << std::hex << (unsigned char)(s[0]) << (unsigned char)(s[1]) << L", 0x");
+//			for (size_t i = 0; i < v.size() - 1; i++)
+//			{
+//				ss = COMBINE_WSTR(ss << std::hex << (unsigned char)v[i]);
+//			}
+//			ss = COMBINE_WSTR(ss << L"\r\n");
+//		}
+
+//	}
+//}
+
+
+//
+#include <stdint.h>
+vector<wchar_t> GB18030ToUtf16LE(const uint8_t * s)
+{
+	int nUtf16WChars = ::MultiByteToWideChar(54936, 0, (char *)s, -1, NULL, 0);
+	vector<wchar_t> utf16WChars(nUtf16WChars);
+	::MultiByteToWideChar(54936, 0, (char *)s, -1, &utf16WChars[0], (int32_t)utf16WChars.size());
+	return utf16WChars;
+}
+typedef unsigned char utf8_char;
+vector<utf8_char> Utf16LEToUtf8(const wchar_t * s)
+{
+	int nUtf8Chars = ::WideCharToMultiByte(CP_UTF8, 0, s, -1, NULL, 0, NULL, NULL);
+	vector<utf8_char> utf8Chars(nUtf8Chars);
+	::WideCharToMultiByte(CP_UTF8, 0, s, -1, (char *)&utf8Chars[0], nUtf8Chars, NULL, NULL);
+	return utf8Chars;
+}
+#include <sstream>
+#define COMBINE_WSTR(s) (((std::wostringstream&)(std::wostringstream()<<std::wstring() << s)).str().c_str())
+#define  MAKESTR(s) (((std::ostringstream&)(std::ostringstream()<<std::string() << s)).str().c_str())
+
+void GBK_Utf8()
+{
+	wstring ss;
+	int nIndex = 0;
+	//FILE * pFile;
+	//pFile = fopen("D:/Program Files/lk780000/LKRoom/lkplaza/dist.config", "w+");
+	FILE * pFile;
+	FILE * pFile2;
+	string _ss = MAKESTR("{}");
+	pFile = fopen("myfile.bin", "wb");
+	pFile2 = fopen("myfile2.bin", "wb");
+
+	if (pFile == NULL)
+	{
+		return;
+	}
+	for (unsigned char left = 0x81; left < 0xff; left++)
+	{
+		for (unsigned char right = 0x40; right < 0xff; right++)
+		{
+			char s[] = { (char)left, (char)right, (char)0x00 };  //GB18030
+
+			if (right != 0x7f)
+			{
+				vector<utf8_char> v = Utf16LEToUtf8(&(GB18030ToUtf16LE((uint8_t *)s))[0]);
+
+				char * x = (char *)&v[0];
+				int l = v.size();
+				if (l != 4)
+				{
+					if (l == 3)
+						ss = L"2";
+					else
+					{
+						ss = L"1";
+						
+					}
+					ss = L"";
+				}
+
+				string _s;
+				if (v.size() == 3)
+				{
+					_s = _s + "0x00,";
+				}
+				for (size_t i = 0; i <v.size()-1 ; i++)
+				{
+					_s = MAKESTR(_s << "0x" << std::hex << (int)v[v.size() - 2- i] << ",");
+					if (v[i]<16)
+					{
+						continue;
+					}
+				}
+		
+				//_s = _s + ",";
+				fwrite(_s.c_str(), sizeof(char), _s.length(), pFile);
+
+				nIndex = nIndex + 1;
+			}
+
+		}
+	}
+	fclose(pFile);
+	fclose(pFile2);
+
+
+
+
+	for (unsigned char left = 0x81; left < 0xff; left++)
+	{
+		for (unsigned char right = 0x40; right < 0xff; right++)
+		{
+			if (right != 0x7f)
+			{
+				char s[] = { (char)left, (char)right, (char)0x00 };
+				vector<utf8_char> v = Utf16LEToUtf8(&(GB18030ToUtf16LE((uint8_t *)s))[0]);
+				unsigned int index = (left - 0x81)*(0xff - 0x40 - 1) + right - 0x40-(right>0x7f?1:0);
+				string _s = "";
+				for (size_t i = 0; i < v.size() - 1; i++)
+				{
+					_s = MAKESTR(_s << std::hex << (int)v[i]);
+				}
+				//if (_s != MAKESTR(std::hex << utf8[index]))
+				//{
+				//	continue;
+				//}
+			}
+		}
+	}
+	int adfadf = 1;
+}
+
+#include"gbk2utf8map.h"
+
+string GBK2utf8(const char* inbuf)
+{
+	unsigned int length = strlen(inbuf);
+	char* outbuf = new char[length * 3 / 2 + 1];
+	ZeroMemory(outbuf, length * 3 / 2+1);
+	unsigned char* p = NULL;
+	unsigned int offset = 0;
+	for (size_t i = 0; i < length; )
+	{
+		p = (unsigned char*)inbuf+i;
+		unsigned char left = *p, right = *(p + 1);
+		if (left < 0x80)//asnii 0~127
+		{
+			memcpy_s(outbuf + offset, 1, &left, 1);
+			offset++;
+			i++;
+		}
+		else if(left == 0xff || right<0x40 || right == 0x7f || right == 0xff)
+		{
+			return "";
+		}
+		else //gbk
+		{
+			unsigned int index = (left - 0x81)*(0xff - 0x40 - 1) + right - 0x40 - (right>0x7f ? 1 : 0);
+			byte copysize = utf8_2[index * 3+2] > 0x00 ? 3 : 2;
+			memcpy_s(outbuf + offset, copysize, ((unsigned char*)(utf8_2 + 3 * index)), copysize);
+			offset = offset + copysize;
+			i = i + 2;
+		}
+		
+	}
+	string ret = (outbuf);
+	delete(outbuf);
+	return ret;
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
+	int tint[2] = { 0xffffff00, 0xff000000 };
+	byte tttt[8] = { 0 };
+	memcpy_s(tttt, 8, &tint, 8);
 
+	//GBK_Utf8();
+	string allGBKChar;
+	for (byte down = 0x81; down < 0xfe; down++)
+	{
+		for (byte up = 0x40; up < 0xff; up++)
+		{
+			if (up != 0x7f)
+			{
+				allGBKChar.append(1,(char)down);
+				allGBKChar.append(1,(char)up);
+			}
+		}
+	}
+	allGBKChar.append("\0");
+	char sssssss1[8] = { 0x61, 0x81, 0x41, 0x63, 0x81, 0x42, 0x62, 0x0 };
+	string sssssss2 = GBK2utf8(allGBKChar.c_str());
+	//string sssssss2 = GBK2utf8(sssssss1);
+
+	vector<utf8_char> v = Utf16LEToUtf8(&(GB18030ToUtf16LE((uint8_t *)allGBKChar.c_str()))[0]);
+	string sssssss3 = (char*)v.data();
+	if (sssssss2 == sssssss3)
+	{
+
+		return 1;
+	}
+	else
+	{
+		return 1;
+	}
 	testMD5();
 
 
