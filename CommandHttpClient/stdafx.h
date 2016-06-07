@@ -13,3 +13,9 @@
 
 
 // TODO:  在此处引用程序需要的其他头文件
+#include <sstream>
+#include <string>
+using namespace std;
+// TODO:  在此处引用程序需要的其他头文件
+
+#define MAKESTR(a) ((ostringstream&)(ostringstream()<<string()<<a)).str().c_str()
