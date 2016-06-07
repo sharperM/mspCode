@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "Win32Project1.h"
 #include <CommCtrl.h>
-#include "RockSocket.h"
+//#include "RockSocket.h"
 #include <Vfw.h>
 #include <stdio.h>
 #include <windowsx.h>
@@ -15,6 +15,8 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include "testCode.h"
+
 #pragma comment(lib, "Strmiids.lib")
 #pragma comment(lib, "Quartz.lib")
 #pragma comment(lib, "Vfw32.lib")
@@ -221,7 +223,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case 1:
 			if (wmEvent == BN_CLICKED)
 			{
-				RockSocket::instance();
+				//RockSocket::instance();
+				testCode::instance().download();
 			}
 
 			break;

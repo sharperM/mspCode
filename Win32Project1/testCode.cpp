@@ -128,4 +128,4 @@ bool testCode::download()
 	if (hSession) WinHttpCloseHandle(hSession);	return true;
 }
 
-bool r = testCode::instance().download();
+//bool r = testCode::instance().download();
